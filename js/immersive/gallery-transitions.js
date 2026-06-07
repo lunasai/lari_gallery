@@ -1,4 +1,4 @@
-import gsap from '../../node_modules/gsap/index.js';
+import gsap from 'gsap';
 
 const ENTER_TOTAL_DURATION = 3;
 const ENTER_OVERLAY_FADE = 0.5;

@@ -1,4 +1,4 @@
-import Lenis from '../node_modules/lenis/dist/lenis.mjs';
+import Lenis from 'lenis';
 
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
