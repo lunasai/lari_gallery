@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Gallery of Larissa Sans — paintings, linoprints, and mixed media. Filter by works available for sale." />
+  <title>Gallery — Larissa Sans</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="Logo.png" />
+  <link rel="apple-touch-icon" href="Logo.png" />
+</head>
+
+<body>
+
+  <!-- ─── Navigation ─────────────────────────── -->
+  <header>
+    <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+      <a href="index.html" class="nav__logo" aria-label="Larissa Sans — home">
+        <img src="Logo.png" alt="Larissa Sans logo" />
+      </a>
+
+      <ul class="nav__links" role="list">
+        <li><a href="gallery.html" aria-current="page" style="border-bottom: 1px solid var(--pink);">gallery</a></li>
+        <li><a href="index.html#immersive">immersive</a></li>
+      </ul>
+
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSfza_mfzwLc7uCThFxfq13U8lO7o-J2r4gm7WO2TnqPvVy61A/viewform"
+        class="nav__cta"
+        target="_blank"
+        rel="noopener"
+      >hire me</a>
+
+      <button class="nav__burger site-nav__menu" id="navBurger" aria-label="Open menu" aria-expanded="false">menu</button>
+    </nav>
+
+    <div class="modal-backdrop nav__overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="Navigation menu" hidden>
+      <a href="index.html" class="nav__overlay-link">Gallery</a>
+      <a href="index.html#about" class="nav__overlay-link">About</a>
+      <a href="index.html#commission" class="nav__overlay-link">Commission a piece</a>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="page-header">
+      <h1 class="page-header__title">gallery<em>.</em></h1>
+      <div class="page-header__meta">
+        <p class="page-header__count" id="visibleCount">6 works</p>
+        <p class="page-header__count"><a href="index.html#immersive" style="color: inherit; opacity: 0.7;">immersive view →</a></p>
+      </div>
+    </div>
+
+    <div class="filter-bar filter-bar--sale" role="group" aria-label="Filter by availability">
+      <span class="filter-bar__sale-label" id="saleFilterLabel">Available for sale only</span>
+      <button
+        type="button"
+        class="filter-sale-toggle"
+        id="forSaleToggle"
+        role="switch"
+        aria-checked="false"
+        aria-labelledby="saleFilterLabel"
+      >
+        <span class="filter-sale-toggle__track" aria-hidden="true">
+          <span class="filter-sale-toggle__knob"></span>
+        </span>
+      </button>
+    </div>
+
+    <section class="portfolio-section" aria-label="Gallery grid">
+      <div class="portfolio-grid" id="portfolioGrid">
+
+        <article class="pf-card pf-card--tall"
+          data-for-sale="true"
+          data-src="arts lari/IMG_7451.JPG"
+          data-title="Woman &amp; Wolf"
+          data-category="Linoprint"
+          data-year="2023"
+          data-technique="Linoprint on paper"
+          data-dimensions="A3 · 29.7 × 42 cm"
+          data-description="A woman and a wolf merge in a dense, dreamlike composition. Cut by hand from linoleum, this piece explores the bond between the feminine and the wild — two forces that have never truly been separate."
+        >
+          <div class="pf-card__image">
+            <img src="arts lari/IMG_7451.JPG" alt="Linoprint — woman and wolf" loading="lazy" />
+          </div>
+          <div class="pf-card__overlay">
+            <p class="pf-card__overlay-title">Woman &amp; Wolf</p>
+            <p class="pf-card__overlay-cat">Linoprint · 2023</p>
+          </div>
+        </article>
+
+        <article class="pf-card"
+          data-for-sale="true"
+          data-src="arts lari/IMG_1854.jpg"
+          data-title="Mini Canvas Series"
+          data-category="Painting"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="10 × 10 cm each · set of 4"
+          data-description="Four small-format paintings that together form one meditation on circular form and warm colour. Geometric arcs in roasted pink and dusty lavender — quiet, repetitive, contemplative."
+        >
+          <div class="pf-card__image">
+            <img src="arts lari/IMG_1854.jpg" alt="Mini canvas series in roasted pink" loading="lazy" />
+          </div>
+          <div class="pf-card__overlay">
+            <p class="pf-card__overlay-title">Mini Canvas Series</p>
+            <p class="pf-card__overlay-cat">Painting · 2024</p>
+          </div>
+        </article>
+
+        <article class="pf-card"
+          data-for-sale="true"
+          data-src="arts lari/IMG_4987.jpg"
+          data-title="The Eye"
+          data-category="Painting · Mixed Media"
+          data-year="2023"
+          data-technique="Oil and mixed media on canvas"
+          data-dimensions="30 × 24 cm"
+          data-description="From a heavily textured white surface, a single eye looks out — framed in deep red, iris in teal. Raw, intimate, and quietly unsettling. A study in isolation and visibility."
+        >
+          <div class="pf-card__image">
+            <img src="arts lari/IMG_4987.jpg" alt="Mixed media — an eye on textured canvas" loading="lazy" />
+          </div>
+          <div class="pf-card__overlay">
+            <p class="pf-card__overlay-title">The Eye</p>
+            <p class="pf-card__overlay-cat">Mixed Media · 2023</p>
+          </div>
+        </article>
+
+        <article class="pf-card pf-card--tall"
+          data-for-sale="false"
+          data-src="arts lari/DSCF3651.JPG"
+          data-title="Commissioned Portrait"
+          data-category="Painting · Commission"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="21 × 29.7 cm"
+          data-description="A woman holds a white bird against her chest, crowned by a golden halo on a dusty pink ground. Painted as a commission, this piece celebrates the sacred in the everyday feminine."
+        >
+          <div class="pf-card__image">
+            <img src="arts lari/DSCF3651.JPG" alt="Commissioned portrait — woman with halo" loading="lazy" />
+          </div>
+          <div class="pf-card__overlay">
+            <p class="pf-card__overlay-title">Commissioned Portrait</p>
+            <p class="pf-card__overlay-cat">Commission · 2024</p>
+          </div>
+        </article>
+
+        <article class="pf-card pf-card--wide"
+          data-for-sale="true"
+          data-src="arts lari/DSCF3546.JPG"
+          data-title="Rider"
+          data-category="Painting"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="40 × 50 cm"
+          data-description="A woman rides through a world of flat colour and flowing form — terracotta, teal, off-white. A painting about freedom, movement, and the body in motion through an invented landscape."
+        >
+          <div class="pf-card__image">
+            <img src="arts lari/DSCF3546.JPG" alt="Painting — woman riding a horse in flat colour" loading="lazy" style="object-position: center 25%;" />
+          </div>
+          <div class="pf-card__overlay">
+            <p class="pf-card__overlay-title">Rider</p>
+            <p class="pf-card__overlay-cat">Painting · 2024</p>
+          </div>
+        </article>
+
+        <article class="pf-card"
+          data-for-sale="true"
+          data-src="arts lari/IMG_4991.jpg"
+          data-title="Intimacy"
+          data-category="Painting · Figurative"
+          data-year="2022"
+          data-technique="Acrylic on canvas"
+          data-dimensions="20 × 20 cm"
+          data-description="Hands hold a strip of fabric against warm ochre bodies. The everyday becomes tender. A small painting about the quiet intimacy of ordinary moments and the eroticism of the mundane."
+        >
+          <div class="pf-card__image">
+            <img src="arts lari/IMG_4991.jpg" alt="Figurative painting — hands and fabric" loading="lazy" />
+          </div>
+          <div class="pf-card__overlay">
+            <p class="pf-card__overlay-title">Intimacy</p>
+            <p class="pf-card__overlay-cat">Painting · 2022</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="cta" id="commission" aria-labelledby="pf-cta-title">
+      <div class="cta__eyebrow t-label" aria-hidden="true">
+        <span>★</span> commission a piece <span>★</span>
+      </div>
+      <h2 class="cta__heading" id="pf-cta-title">
+        Want something made for you?
+      </h2>
+      <p class="cta__sub t-body">
+        Each piece is unique. Tell me what you have in mind and we'll figure out the rest.
+      </p>
+      <div class="cta__actions">
+        <a href="index.html#commission" class="btn btn--primary">start a commission</a>
+        <a href="mailto:oi.larissasan@gmail.com" class="btn btn--ghost">send an email</a>
+      </div>
+      <p class="cta__email">oi.larissasan@gmail.com</p>
+    </section>
+
+    <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle" data-lenis-prevent hidden>
+      <div class="modal" id="modal">
+        <div class="modal__controls">
+          <div class="modal__nav" id="modalNav">
+            <button type="button" class="modal__icon-btn modal__icon-btn--nav" id="modalPrev" aria-label="Previous work">
+              <svg class="modal__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <button type="button" class="modal__icon-btn modal__icon-btn--nav" id="modalNext" aria-label="Next work">
+              <svg class="modal__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <button type="button" class="modal__icon-btn modal__close" id="modalClose" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal__image-wrap">
+          <div class="modal__image-stage">
+            <img class="modal__image" id="modalImage" src="" alt="" />
+          </div>
+        </div>
+        <div class="modal__details">
+          <p class="modal__category" id="modalCategory"></p>
+          <h2 class="modal__title" id="modalTitle"></h2>
+          <p class="modal__description" id="modalDescription"></p>
+          <div class="modal__meta">
+            <hr class="modal__divider" aria-hidden="true" />
+            <div class="modal__field">
+              <span class="modal__label">Year</span>
+              <span class="modal__value" id="modalYear"></span>
+            </div>
+            <div class="modal__field">
+              <span class="modal__label">Technique</span>
+              <span class="modal__value" id="modalTechnique"></span>
+            </div>
+            <div class="modal__field">
+              <span class="modal__label">Dimensions</span>
+              <span class="modal__value" id="modalDimensions"></span>
+            </div>
+            <hr class="modal__divider" aria-hidden="true" />
+          </div>
+          <div class="modal__footer">
+            <p class="modal__availability" id="modalAvailability"></p>
+            <a class="modal__cta" id="modalCta" href="mailto:oi.larissasan@gmail.com">Acquire</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer__logo">
+      <img src="Logo.png" alt="Larissa Sans logo" />
+    </div>
+    <nav class="footer__links" aria-label="Footer navigation">
+      <a href="https://www.behance.net/larissasans" target="_blank" rel="noopener">behance</a>
+      <a href="https://substack.com/@larissasans" target="_blank" rel="noopener">substack</a>
+      <a href="https://www.tiktok.com/@larissa.sans" target="_blank" rel="noopener">tiktok</a>
+      <a href="mailto:oi.larissasan@gmail.com">email</a>
+    </nav>
+    <p class="footer__copy">© 2026 Larissa Sans. All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="js/lenis-init.js"></script>
+  <script src="js/mobile-menu.js"></script>
+  <script>
+    const toggle  = document.getElementById('forSaleToggle');
+    const cards   = document.querySelectorAll('.pf-card');
+    const counter = document.getElementById('visibleCount');
+
+    function updateCount() {
+      const visible = [...cards].filter(c => c.dataset.hidden !== 'true').length;
+      counter.textContent = visible + (visible === 1 ? ' work' : ' works');
+    }
+
+    function applyFilter() {
+      const onlySale = toggle.getAttribute('aria-checked') === 'true';
+      toggle.classList.toggle('is-on', onlySale);
+      cards.forEach(card => {
+        const forSale = card.dataset.forSale === 'true';
+        const show = !onlySale || forSale;
+        card.dataset.hidden = show ? 'false' : 'true';
+      });
+      updateCount();
+      window.__artModal?.syncWithFilters?.();
+    }
+
+    toggle.addEventListener('click', () => {
+      const on = toggle.getAttribute('aria-checked') === 'true';
+      toggle.setAttribute('aria-checked', on ? 'false' : 'true');
+      applyFilter();
+    });
+
+    applyFilter();
+
+  </script>
+
+  <script type="module">
+    import { initArtModal } from './js/modal.js';
+
+    window.__artModal = initArtModal({
+      itemSelector: '.pf-card',
+      isVisible: (el) => el.dataset.hidden !== 'true',
+      isAvailable: (el) => el.dataset.forSale === 'true',
+    });
+
+    document.querySelectorAll('.pf-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        if (card.dataset.hidden === 'true') return;
+        window.__artModal?.open(card);
+      });
+    });
+  </script>
+
+</body>
+</html>

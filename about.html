@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="About Larissa Sans — Brazilian visual artist and multidisciplinary designer based in Amsterdam. Painting, linoprint, illustration, branding." />
+  <title>About — Larissa Sans</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="Logo.png" />
+  <link rel="apple-touch-icon" href="Logo.png" />
+
+  <style>
+    /* ── About page overrides & unique styles ── */
+
+    /* 1. Full-bleed hero */
+    .ab2-hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .ab2-hero__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .ab2-hero__bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+    }
+
+    /* gradient from bottom */
+    .ab2-hero__bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(var(--black-rgb), 0.92) 0%,
+        rgba(var(--black-rgb), 0.40) 45%,
+        transparent 100%
+      );
+    }
+
+    .ab2-hero__content {
+      position: relative;
+      z-index: 1;
+      padding: var(--space-xl) var(--space-lg) var(--space-lg);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: flex-end;
+      gap: var(--space-lg);
+    }
+
+    .ab2-hero__name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(64px, 9vw, 130px);
+      line-height: 0.88;
+      letter-spacing: -0.04em;
+      color: var(--white);
+    }
+
+    .ab2-hero__name em {
+      font-style: normal;
+      color: var(--pink);
+    }
+
+    .ab2-hero__right {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      padding-bottom: 6px;
+    }
+
+    .ab2-hero__location {
+      font-family: var(--font-body);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      opacity: 0.45;
+    }
+
+    .ab2-hero__tagline {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: clamp(15px, 1.4vw, 18px);
+      line-height: 1.6;
+      color: var(--white);
+      opacity: 0.75;
+      max-width: 380px;
+    }
+
+    .ab2-hero__scroll {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      color: var(--white);
+      opacity: 0.3;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .ab2-hero__scroll-line {
+      width: 32px;
+      height: 1px;
+      background: var(--white);
+    }
+
+    /* 2. Marquee strip */
+    .marquee-strip {
+      background: var(--black);
+      color: var(--white);
+      padding: 18px 0;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 22s linear infinite;
+    }
+
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      padding: 0 var(--space-lg);
+      white-space: nowrap;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(14px, 1.5vw, 18px);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .marquee-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--pink);
+      flex-shrink: 0;
+    }
+
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* 3. Editorial lede */
+    .ab2-lede {
+      padding: var(--space-xl) var(--space-lg);
+      border-bottom: 1px solid rgba(var(--black-rgb), 0.10);
+    }
+
+    .ab2-lede__text {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(26px, 3.5vw, 48px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      max-width: 900px;
+    }
+
+    .ab2-lede__text em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--pink);
+    }
+
+    /* 4. Bio: newspaper two columns + image */
+    .ab2-bio {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid rgba(var(--black-rgb), 0.10);
+    }
+
+    .ab2-bio__col {
+      padding: var(--space-xl) var(--space-lg);
+      border-right: 1px solid rgba(var(--black-rgb), 0.10);
+    }
+
+    .ab2-bio__col:last-child {
+      border-right: none;
+    }
+
+    .ab2-bio__label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      margin-bottom: var(--space-md);
+      display: block;
+    }
+
+    .ab2-bio__text {
+      font-size: 15px;
+      line-height: 1.75;
+      opacity: 0.75;
+    }
+
+    .ab2-bio__image {
+      overflow: hidden;
+    }
+
+    .ab2-bio__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      min-height: 400px;
+    }
+
+    /* Education list */
+    .ab2-edu {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .ab2-edu__item {
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid rgba(var(--black-rgb), 0.08);
+    }
+
+    .ab2-edu__item:last-child {
+      border-bottom: none;
+    }
+
+    .ab2-edu__school {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    .ab2-edu__detail {
+      font-size: 13px;
+      opacity: 0.5;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* 5. Pull quote — enormous white-bg statement */
+    .ab2-statement {
+      padding: var(--space-xl) var(--space-lg);
+      border-bottom: 1px solid rgba(var(--black-rgb), 0.10);
+    }
+
+    .ab2-statement__label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xl);
+    }
+
+    .ab2-statement__quote {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(36px, 5.5vw, 80px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      max-width: 1100px;
+    }
+
+    .ab2-statement__quote em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--pink);
+    }
+
+    .ab2-statement__pt {
+      margin-top: var(--space-xl);
+      padding-top: var(--space-lg);
+      border-top: 1px solid rgba(var(--black-rgb), 0.10);
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    .ab2-statement__pt-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      padding-top: 4px;
+    }
+
+    .ab2-statement__pt-text {
+      font-size: 15px;
+      line-height: 1.75;
+      font-style: italic;
+      opacity: 0.6;
+    }
+
+    /* 6. Facts strip */
+    .ab2-facts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--black);
+      border-bottom: 1px solid var(--black);
+    }
+
+    .ab2-fact {
+      padding: var(--space-lg) var(--space-md);
+      border-right: 1px solid rgba(var(--black-rgb), 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .ab2-fact:last-child {
+      border-right: none;
+    }
+
+    .ab2-fact__value {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(28px, 3.5vw, 52px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--black);
+    }
+
+    .ab2-fact__value em {
+      color: var(--pink);
+      font-style: normal;
+    }
+
+    .ab2-fact__label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.4;
+    }
+
+    /* 7. Techniques: alternating full-width rows */
+    .ab2-techniques {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .technique-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 520px;
+      border-bottom: 1px solid rgba(var(--black-rgb), 0.10);
+    }
+
+    .technique-row--reverse {
+      direction: rtl;
+    }
+
+    .technique-row--reverse > * {
+      direction: ltr;
+    }
+
+    .technique-row__image {
+      overflow: hidden;
+      background: var(--parchment);
+    }
+
+    .technique-row__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.6s ease;
+    }
+
+    .technique-row:hover .technique-row__image img {
+      transform: scale(1.03);
+    }
+
+    .technique-row__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--space-xl) var(--space-lg);
+      gap: var(--space-md);
+    }
+
+    .technique-row__number {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 80px;
+      color: var(--parchment);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      margin-bottom: -8px;
+    }
+
+    .technique-row__title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(28px, 3vw, 44px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .technique-row__desc {
+      font-size: 15px;
+      line-height: 1.75;
+      opacity: 0.65;
+      max-width: 420px;
+    }
+
+    .technique-row__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: var(--space-sm);
+    }
+
+    /* 8. Process strip — full-width 3 photos */
+    .ab2-process {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      height: 480px;
+    }
+
+    .ab2-process__photo {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ab2-process__photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.55s ease, filter 0.4s ease;
+      filter: saturate(0.7);
+    }
+
+    .ab2-process__photo:hover img {
+      transform: scale(1.04);
+      filter: saturate(1);
+    }
+
+    .ab2-process__caption {
+      position: absolute;
+      bottom: var(--space-sm);
+      left: var(--space-sm);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white);
+      opacity: 0;
+      transition: opacity 0.3s;
+      background: rgba(var(--black-rgb), 0.52);
+      padding: 4px 8px;
+    }
+
+    .ab2-process__photo:hover .ab2-process__caption {
+      opacity: 1;
+    }
+
+    /* 9. Simplified CTA */
+    .ab2-cta {
+      padding: var(--space-2xl) var(--space-lg);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--space-lg);
+      border-top: 1px solid var(--black);
+    }
+
+    .ab2-cta__heading {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(32px, 5vw, 72px);
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+    }
+
+    .ab2-cta__heading em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--pink);
+    }
+
+    .ab2-cta__actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--space-sm);
+      flex-shrink: 0;
+    }
+
+    .ab2-cta__email {
+      font-size: 12px;
+      opacity: 0.4;
+      letter-spacing: 0.04em;
+    }
+
+    /* Responsive about */
+    @media (max-width: 900px) {
+      .ab2-hero__content {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+      }
+      .ab2-bio {
+        grid-template-columns: 1fr;
+      }
+      .ab2-bio__image {
+        height: 60vw;
+      }
+      .ab2-bio__image img {
+        min-height: unset;
+        height: 100%;
+      }
+      .ab2-bio__col {
+        border-right: none;
+        border-bottom: 1px solid rgba(var(--black-rgb), 0.10);
+        padding: var(--space-lg);
+      }
+      .ab2-facts {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .ab2-fact:nth-child(2) { border-right: none; }
+      .ab2-fact:nth-child(3) { border-top: 1px solid rgba(var(--black-rgb), 0.15); }
+      .ab2-fact:nth-child(4) { border-top: 1px solid rgba(var(--black-rgb), 0.15); }
+      .technique-row {
+        grid-template-columns: 1fr;
+        min-height: unset;
+      }
+      .technique-row__image {
+        height: 56vw;
+      }
+      .technique-row--reverse {
+        direction: ltr;
+      }
+      .ab2-process {
+        grid-template-columns: 1fr;
+        height: unset;
+      }
+      .ab2-process__photo {
+        height: 56vw;
+      }
+      .ab2-cta {
+        grid-template-columns: 1fr;
+      }
+      .ab2-cta__actions {
+        align-items: flex-start;
+      }
+      .ab2-statement__pt {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .ab2-facts {
+        grid-template-columns: 1fr 1fr;
+      }
+      .ab2-statement__quote {
+        font-size: clamp(28px, 8vw, 44px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── Navigation ─────────────────────────── -->
+  <header>
+    <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+      <a href="index.html" class="nav__logo" aria-label="Larissa Sans — home">
+        <img src="Logo.png" alt="Larissa Sans logo" />
+      </a>
+
+      <ul class="nav__links" role="list">
+        <li><a href="gallery.html">gallery</a></li>
+        <li><a href="index.html#immersive">immersive</a></li>
+      </ul>
+
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSfza_mfzwLc7uCThFxfq13U8lO7o-J2r4gm7WO2TnqPvVy61A/viewform"
+        class="nav__cta" target="_blank" rel="noopener"
+      >hire me</a>
+
+      <button class="nav__burger site-nav__menu" id="navBurger" aria-label="Open menu" aria-expanded="false">menu</button>
+    </nav>
+
+    <div class="nav__overlay modal-backdrop" id="navOverlay" role="dialog" aria-modal="true" aria-label="Navigation menu" hidden>
+      <a href="index.html" class="nav__overlay-link">Gallery</a>
+      <a href="index.html#about" class="nav__overlay-link">About</a>
+      <a href="index.html#commission" class="nav__overlay-link">Commission a piece</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ① Full-bleed portrait hero ─────────────── -->
+    <section class="ab2-hero" aria-label="Portrait of Larissa Sans">
+      <div class="ab2-hero__bg" aria-hidden="true">
+        <img
+          src="arts lari/IMG_7433.JPG"
+          alt="Larissa Sans in her Amsterdam studio surrounded by her paintings"
+          loading="eager"
+        />
+      </div>
+
+      <div class="ab2-hero__content">
+        <h1 class="ab2-hero__name">larissa<br/>sans<em>.</em></h1>
+
+        <div class="ab2-hero__right">
+          <p class="ab2-hero__location">São Paulo → Amsterdam</p>
+          <p class="ab2-hero__tagline">
+            Visual artist and designer exploring the body,
+            memory, and ancestry — through paint, print, and image.
+          </p>
+          <div class="ab2-hero__scroll" aria-hidden="true">
+            <span class="ab2-hero__scroll-line"></span>
+            scroll
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ② Marquee strip ─────────────────────────── -->
+    <div class="marquee-strip" aria-hidden="true">
+      <div class="marquee-track">
+        <!-- duplicated for seamless loop -->
+        <span class="marquee-item">Painting <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Linoprint <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Digital Illustration <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Brand Identity <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Photography <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Mixed Media <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Painting <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Linoprint <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Digital Illustration <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Brand Identity <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Photography <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Mixed Media <span class="marquee-dot"></span></span>
+      </div>
+    </div>
+
+    <!-- ③ Editorial lede ───────────────────────── -->
+    <section class="ab2-lede" aria-label="Introduction">
+      <p class="ab2-lede__text">
+        She grew up in São Paulo. She lives in Amsterdam.
+        In between, she makes work about the body —
+        what it <em>holds</em>, what it <em>forgets</em>,
+        what it carries across borders.
+      </p>
+    </section>
+
+    <!-- ④ Bio — newspaper columns ──────────────── -->
+    <section class="ab2-bio" aria-labelledby="bio-label">
+      <div class="ab2-bio__col">
+        <span class="ab2-bio__label" id="bio-label">Biography</span>
+        <p class="ab2-bio__text">
+          Larissa Sans is a Brazilian visual artist and multidisciplinary
+          designer based in Amsterdam. She holds a degree in Visual Arts
+          from Faculdade Paulista de Artes (FPA, São Paulo) and in Graphic
+          Design from the British School of Creative Arts (EBAC), and has
+          further trained in cinema, classical ballet, and computational
+          graphics.
+        </p>
+      </div>
+
+      <div class="ab2-bio__col">
+        <span class="ab2-bio__label">Practice</span>
+        <p class="ab2-bio__text">
+          Her work investigates the relationship of bodies — especially
+          women's — with the environment, with dreams, with memory, and
+          with ancestry. Rooted in São Paulo and shaped by Amsterdam, she
+          moves between painting, linoprint, digital illustration, and
+          brand design — bringing the same depth of intention to a personal
+          commission and to a visual identity. She works with individual
+          collectors and with small businesses in lifestyle, food,
+          hospitality, and music.
+        </p>
+      </div>
+
+      <div class="ab2-bio__col">
+        <span class="ab2-bio__label">Education</span>
+        <div class="ab2-edu" role="list">
+          <div class="ab2-edu__item" role="listitem">
+            <p class="ab2-edu__school">Graphic Design</p>
+            <p class="ab2-edu__detail">British School of Creative Arts (EBAC), São Paulo</p>
+          </div>
+          <div class="ab2-edu__item" role="listitem">
+            <p class="ab2-edu__school">Visual Arts</p>
+            <p class="ab2-edu__detail">Faculdade Paulista de Artes (FPA), São Paulo</p>
+          </div>
+          <div class="ab2-edu__item" role="listitem">
+            <p class="ab2-edu__school">Further studies</p>
+            <p class="ab2-edu__detail">Cinema · Classical ballet · Computational graphics</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ⑦ Techniques — alternating rows ─────────── -->
+    <section class="ab2-techniques" aria-labelledby="tech-label">
+      <div style="padding: var(--space-lg) var(--space-lg) 0; border-top: 1px solid var(--black);">
+        <p id="tech-label" class="t-label" style="opacity:0.4;">Art techniques</p>
+      </div>
+
+      <!-- Painting: image left, text right -->
+      <div class="technique-row">
+        <div class="technique-row__image">
+          <img src="arts lari/IMG_7457.JPG" alt="Larissa painting small works on a wall" loading="lazy" />
+        </div>
+        <div class="technique-row__content">
+          <p class="technique-row__number" aria-hidden="true">01</p>
+          <h2 class="technique-row__title">Painting</h2>
+          <p class="technique-row__desc">
+            Working primarily in acrylic and oil, Larissa builds up layers of colour on canvas
+            and board. Her paintings range from small-format intimate studies to larger figurative
+            works. Each begins with loose gestural marks — gradually refined, or deliberately left raw.
+          </p>
+          <div class="technique-row__tags">
+            <span class="technique-tag">Acrylic</span>
+            <span class="technique-tag">Oil</span>
+            <span class="technique-tag">Mixed Media</span>
+            <span class="technique-tag">Canvas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linoprint: text left, image right -->
+      <div class="technique-row technique-row--reverse">
+        <div class="technique-row__image">
+          <img src="arts lari/IMG_7451.JPG" alt="Linoprint — woman and wolf" loading="lazy" />
+        </div>
+        <div class="technique-row__content">
+          <p class="technique-row__number" aria-hidden="true">02</p>
+          <h2 class="technique-row__title">Linoprint</h2>
+          <p class="technique-row__desc">
+            Hand-carved from linoleum and printed on paper. The process is irreversible — each cut
+            commits. The resulting works are high-contrast, richly textured, and carry the unmistakable
+            trace of the hand. Available as signed, limited-edition prints.
+          </p>
+          <div class="technique-row__tags">
+            <span class="technique-tag">Hand-carved</span>
+            <span class="technique-tag">Linoleum</span>
+            <span class="technique-tag">Limited editions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Digital Illustration: image left, text right -->
+      <div class="technique-row">
+        <div class="technique-row__image" style="display:flex; align-items:center; justify-content:center; background:var(--parchment);">
+          <img
+            src="arts lari/Logo 2.png"
+            alt="Digital illustration — female face in line art"
+            loading="lazy"
+            style="object-fit:contain; max-height:70%; max-width:60%; width:auto; height:auto;"
+          />
+        </div>
+        <div class="technique-row__content">
+          <p class="technique-row__number" aria-hidden="true">03</p>
+          <h2 class="technique-row__title">Digital Illustration</h2>
+          <p class="technique-row__desc">
+            Working digitally on iPad and desktop, Larissa creates illustrations that retain the
+            warmth and intentionality of hand-drawn work. Used for commissions, brand identities,
+            and editorial projects. Delivered in high resolution — print-ready and screen-ready.
+          </p>
+          <div class="technique-row__tags">
+            <span class="technique-tag">iPad / Procreate</span>
+            <span class="technique-tag">Vector</span>
+            <span class="technique-tag">Print-ready</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑧ Process photo strip ──────────────────── -->
+    <div class="ab2-process" aria-label="Studio process photographs">
+      <div class="ab2-process__photo">
+        <img src="arts lari/IMG_7449.JPG" alt="Larissa at her easel painting at night" loading="lazy" />
+        <span class="ab2-process__caption">Studio, Amsterdam</span>
+      </div>
+      <div class="ab2-process__photo">
+        <img src="arts lari/DSCF3651.JPG" alt="Larissa holding a commissioned painting" loading="lazy" />
+        <span class="ab2-process__caption">Commission delivery</span>
+      </div>
+      <div class="ab2-process__photo">
+        <img src="arts lari/IMG_7636.jpg" alt="Three of Larissa's paintings on a white wall" loading="lazy" />
+        <span class="ab2-process__caption">Works displayed</span>
+      </div>
+    </div>
+
+    <!-- ⑨ Minimal CTA ───────────────────────────── -->
+    <section class="ab2-cta" aria-labelledby="ab2-cta-title">
+      <h2 class="ab2-cta__heading" id="ab2-cta-title">
+        Got something in<br/><em>mind?</em>
+      </h2>
+      <div class="ab2-cta__actions">
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLSfza_mfzwLc7uCThFxfq13U8lO7o-J2r4gm7WO2TnqPvVy61A/viewform"
+          class="btn btn--primary"
+          target="_blank" rel="noopener"
+        >start a project</a>
+        <p class="ab2-cta__email">oi.larissasan@gmail.com</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer ─────────────────────────────── -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__logo">
+      <img src="Logo.png" alt="Larissa Sans logo" />
+    </div>
+    <nav class="footer__links" aria-label="Footer navigation">
+      <a href="https://www.behance.net/larissasans" target="_blank" rel="noopener">behance</a>
+      <a href="https://substack.com/@larissasans" target="_blank" rel="noopener">substack</a>
+      <a href="https://www.tiktok.com/@larissa.sans" target="_blank" rel="noopener">tiktok</a>
+      <a href="mailto:oi.larissasan@gmail.com">email</a>
+    </nav>
+    <p class="footer__copy">© 2026 Larissa Sans. All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="js/lenis-init.js"></script>
+  <script src="js/mobile-menu.js"></script>
+
+</body>
+</html>

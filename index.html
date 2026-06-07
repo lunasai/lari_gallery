@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Larissa Sans — Brazilian visual artist and multidisciplinary designer based in Amsterdam. Illustration, branding, photography, and fine art commissions." />
+  <title>Larissa Sans — Visual Artist · Amsterdam</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/immersive.css" />
+  <link rel="preload" href="data/gallery.json" as="fetch" crossorigin />
+
+  <!-- Intro images: preload optimized thumbs before first paint -->
+  <link rel="preload" as="image" href="arts lari/intro/IMG_7451.JPG" />
+  <link rel="preload" as="image" href="arts lari/intro/IMG_1854.jpg" />
+  <link rel="preload" as="image" href="arts lari/intro/IMG_4987.jpg" />
+  <link rel="preload" as="image" href="arts lari/intro/IMG_7433.JPG" />
+  <link rel="preload" as="image" href="arts lari/intro/DSCF3651.JPG" />
+  <link rel="preload" as="image" href="arts lari/intro/DSCF3546.JPG" />
+  <link rel="preload" as="image" href="arts lari/intro/IMG_4991.jpg" />
+  <link rel="preload" as="image" href="arts lari/intro/IMG_7449.JPG" />
+
+  <!-- Critical: hide site until intro completes -->
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <style>
+    body.is-intro-active { overflow: hidden; }
+    body.is-intro-active > :not(#intro) { visibility: hidden; }
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background-color: #F4F0E7;
+      overflow: hidden;
+    }
+  </style>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="Logo.png" />
+  <link rel="apple-touch-icon" href="Logo.png" />
+
+</head>
+
+<body class="is-intro-active">
+
+  <!-- ─── Intro Parallax Overlay ─────────────────── -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__floating" id="introFloating">
+      <div class="intro__piece intro__piece--sm intro__piece--p1" data-depth="0.5" aria-hidden="true">
+        <img src="arts lari/intro/IMG_7451.JPG" alt="" decoding="async" loading="eager" fetchpriority="high" />
+      </div>
+      <div class="intro__piece intro__piece--md intro__piece--p2" data-depth="1" aria-hidden="true">
+        <img src="arts lari/intro/IMG_1854.jpg" alt="" decoding="async" loading="eager" fetchpriority="high" />
+      </div>
+      <div class="intro__piece intro__piece--tall intro__piece--p3" data-depth="2" aria-hidden="true">
+        <img src="arts lari/intro/IMG_4987.jpg" alt="" decoding="async" loading="eager" fetchpriority="high" />
+      </div>
+      <div class="intro__piece intro__piece--md intro__piece--p4" data-depth="1" aria-hidden="true">
+        <img src="arts lari/intro/IMG_7433.JPG" alt="" decoding="async" loading="eager" />
+      </div>
+      <div class="intro__piece intro__piece--lg intro__piece--p5" data-depth="1" aria-hidden="true">
+        <img src="arts lari/intro/DSCF3651.JPG" alt="" decoding="async" loading="eager" />
+      </div>
+      <div class="intro__piece intro__piece--tall intro__piece--p6" data-depth="2" aria-hidden="true">
+        <img src="arts lari/intro/DSCF3546.JPG" alt="" decoding="async" loading="eager" />
+      </div>
+      <div class="intro__piece intro__piece--wide intro__piece--p7" data-depth="4" aria-hidden="true">
+        <img src="arts lari/intro/IMG_4991.jpg" alt="" decoding="async" loading="eager" />
+      </div>
+      <div class="intro__piece intro__piece--md intro__piece--p8" data-depth="1" aria-hidden="true">
+        <img src="arts lari/intro/IMG_7449.JPG" alt="" decoding="async" loading="eager" />
+      </div>
+    </div>
+
+    <div class="intro__copy" id="introCopy" aria-hidden="true">
+      <p class="intro__title">Larissa Sans</p>
+    </div>
+  </div>
+
+  <header class="app-shell page-shell" id="appShell">
+    <div class="hero__top site-nav" id="nav" role="navigation" aria-label="Main navigation">
+      <a href="#immersive" class="hero__logo hero__enter" aria-label="Larissa Sans — Gallery">
+        <img src="arts lari/Logo 2.png" alt="" />
+      </a>
+      <a href="#" class="hero__brand site-nav__brand hero__enter">Larissa Sans.</a>
+      <ul class="hero__nav link-rail hero__enter" role="list">
+        <li><a href="#immersive" data-nav-view="immersive">Gallery</a></li>
+        <li><a href="#about" data-nav-view="home">About</a></li>
+        <li><a href="#commission" data-nav-view="commission">Commission a piece</a></li>
+      </ul>
+      <button class="site-nav__menu hero__enter" id="navBurger" aria-label="Open menu" aria-expanded="false">
+        menu
+      </button>
+    </div>
+
+    <div class="modal-backdrop hero__overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="Navigation menu" hidden>
+      <a href="#immersive" class="hero__overlay-link" data-nav-view="immersive">Gallery</a>
+      <a href="#about" class="hero__overlay-link" data-nav-view="home">About</a>
+      <a href="#commission" class="hero__overlay-link" data-nav-view="commission">Commission a piece</a>
+    </div>
+
+    <div class="modal-backdrop commission-overlay" id="commissionOverlay" role="dialog" aria-modal="true" aria-labelledby="contact-title" hidden>
+      <div class="commission-overlay__panel contact">
+        <h1 class="contact__headline" id="contact-title">
+          Let's create <em>art</em>
+        </h1>
+
+        <p class="contact__intro">
+          Tell me about your project, we'll discuss your needs and take it from there.
+        </p>
+
+        <div class="contact__services" role="group" aria-label="Services of interest">
+          <label class="contact__service">
+            <input type="checkbox" class="gallery__checkbox contact__checkbox" name="service" value="social-media" />
+            <span>Social media</span>
+          </label>
+          <label class="contact__service">
+            <input type="checkbox" class="gallery__checkbox contact__checkbox" name="service" value="photography" />
+            <span>Photography</span>
+          </label>
+          <label class="contact__service">
+            <input type="checkbox" class="gallery__checkbox contact__checkbox" name="service" value="art-direction" />
+            <span>Art direction</span>
+          </label>
+          <label class="contact__service">
+            <input type="checkbox" class="gallery__checkbox contact__checkbox" name="service" value="custom-portrait" />
+            <span>Custom portrait</span>
+          </label>
+          <label class="contact__service">
+            <input type="checkbox" class="gallery__checkbox contact__checkbox" name="service" value="linography" />
+            <span>Linography</span>
+          </label>
+        </div>
+
+        <form class="contact__form" action="#" method="post">
+          <div class="contact__field">
+            <label class="visually-hidden" for="contactEmail">email*</label>
+            <input type="email" class="contact__input" id="contactEmail" name="email" autocomplete="email" placeholder="email*" />
+          </div>
+          <div class="contact__field">
+            <label class="visually-hidden" for="contactMessage">message</label>
+            <textarea class="contact__input contact__input--message" id="contactMessage" name="message" rows="1" placeholder="message"></textarea>
+          </div>
+          <button type="button" class="contact__send" aria-disabled="true">send</button>
+        </form>
+
+        <p class="contact__direct-mail">
+          You can also reach out to me directly by mail on
+          <a href="mailto:oi.larissasan@gmail.com">oi.larissasan@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <div id="homeView">
+  <!-- ─── Hero (full landing viewport) ─────────── -->
+  <main>
+    <section class="hero page-shell" id="about" aria-label="Introduction">
+      <div class="hero__grid site-grid site-grid--stretch" id="heroGrid">
+        <div class="hero__bio hero__enter" id="heroBio" data-depth="0.8">
+          <p>
+            Through illustration, design, and photography, Larissa explores
+            the relationship of the female body with environment, dreams,
+            memory, and ancestry.
+          </p>
+          <p>
+            Larissa Sans is a Brazilian visual artist and multidisciplinary designer
+            based in Amsterdam. Graduated in Visual Arts (FPA, São Paulo) and Graphic
+            Design (EBAC), she moves between painting, linoprint, illustration, and
+            brand design — bringing the same depth of intention to a personal commission
+            and to a visual identity.
+          </p>
+        </div>
+        <figure class="hero__art hero__enter" id="heroArt" data-depth="1.5">
+          <img
+            src="arts lari/IMG_7433.JPG"
+            alt="Larissa Sans in her Amsterdam studio with her paintings"
+            loading="eager"
+          />
+        </figure>
+      </div>
+    </section>
+
+    <!-- ─── Gallery ─────────────────────────────── -->
+    <section class="gallery page-shell" id="works" aria-label="Gallery">
+      <div class="gallery__toolbar">
+        <div class="gallery__filters" role="group" aria-label="Filter by category">
+          <button type="button" class="gallery__filter" data-filter="linoprint">Linoprint</button>
+          <button type="button" class="gallery__filter" data-filter="design">Design</button>
+          <button type="button" class="gallery__filter" data-filter="photography">Photography</button>
+          <label class="gallery__available">
+            <input type="checkbox" class="gallery__checkbox" id="galleryAvailable" />
+            <span>Show only available</span>
+          </label>
+        </div>
+        <a href="#immersive" class="gallery__immersive-link">Gallery →</a>
+      </div>
+
+      <p class="gallery__empty" id="galleryEmpty" hidden>No pieces match these filters.</p>
+
+      <div class="gallery__grid site-grid" id="galleryGrid">
+
+        <button type="button" class="gallery__cell gallery__cell--tall" data-slot="1"
+          data-src="arts lari/IMG_7451.JPG"
+          data-title="Woman &amp; Wolf"
+          data-category="Linoprint"
+          data-filter="linoprint"
+          data-available="true"
+          data-year="2023"
+          data-technique="Linoprint on paper"
+          data-dimensions="A3 · 29.7 × 42 cm"
+          data-description="A woman and a wolf merge in a dense, dreamlike composition. Cut by hand from linoleum, this piece explores the bond between the feminine and the wild — two forces that have never truly been separate."
+          aria-label="Woman &amp; Wolf — Linoprint"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_7451.JPG" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--square" data-slot="2"
+          data-src="arts lari/IMG_1854.jpg"
+          data-title="Mini Canvas Series"
+          data-category="Painting"
+          data-filter="design"
+          data-available="true"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="10 × 10 cm each · set of 4"
+          data-description="Four small-format paintings that together form one meditation on circular form and warm colour. Geometric arcs in roasted pink and dusty lavender — quiet, repetitive, contemplative."
+          aria-label="Mini Canvas Series — Painting"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_1854.jpg" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--narrow" data-slot="3"
+          data-src="arts lari/IMG_4987.jpg"
+          data-title="The Eye"
+          data-category="Painting · Mixed Media"
+          data-filter="design"
+          data-available="true"
+          data-year="2023"
+          data-technique="Oil and mixed media on canvas"
+          data-dimensions="30 × 24 cm"
+          data-description="From a heavily textured white surface, a single eye looks out — framed in deep red, iris in teal. Raw, intimate, and quietly unsettling. A study in isolation and visibility."
+          aria-label="The Eye — Painting · Mixed Media"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_4987.jpg" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--tall" data-slot="4"
+          data-src="arts lari/DSCF3546.JPG"
+          data-title="Rider"
+          data-category="Painting"
+          data-filter="design"
+          data-available="true"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="40 × 50 cm"
+          data-description="A woman rides through a world of flat colour and flowing form — terracotta, teal, off-white. A painting about freedom, movement, and the body in motion through an invented landscape."
+          aria-label="Rider — Painting"
+        ><span class="gallery__frame"><img src="arts lari/gallery/DSCF3546.JPG" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--square" data-slot="5"
+          data-src="arts lari/IMG_4991.jpg"
+          data-title="Intimacy"
+          data-category="Painting · Figurative"
+          data-filter="design"
+          data-available="true"
+          data-year="2022"
+          data-technique="Acrylic on canvas"
+          data-dimensions="20 × 20 cm"
+          data-description="Hands hold a strip of fabric against warm ochre bodies. The everyday becomes tender. A small painting about the quiet intimacy of ordinary moments and the eroticism of the mundane."
+          aria-label="Intimacy — Painting · Figurative"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_4991.jpg" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--tall" data-slot="6"
+          data-src="arts lari/DSCF3651.JPG"
+          data-title="Commissioned Portrait"
+          data-category="Painting · Commission"
+          data-filter="design"
+          data-available="false"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="21 × 29.7 cm"
+          data-description="A woman holds a white bird against her chest, crowned by a golden halo on a dusty pink ground. Painted as a commission, this piece celebrates the sacred in the everyday feminine."
+          aria-label="Commissioned Portrait — Painting · Commission"
+        ><span class="gallery__frame"><img src="arts lari/gallery/DSCF3651.JPG" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--narrow" data-slot="7"
+          data-src="arts lari/IMG_4987.jpg"
+          data-title="The Eye"
+          data-category="Painting · Mixed Media"
+          data-filter="design"
+          data-available="true"
+          data-year="2023"
+          data-technique="Oil and mixed media on canvas"
+          data-dimensions="30 × 24 cm"
+          data-description="From a heavily textured white surface, a single eye looks out — framed in deep red, iris in teal. Raw, intimate, and quietly unsettling. A study in isolation and visibility."
+          aria-label="The Eye — Painting · Mixed Media"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_4987.jpg" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--square" data-slot="8"
+          data-src="arts lari/IMG_1854.jpg"
+          data-title="Mini Canvas Series"
+          data-category="Painting"
+          data-filter="design"
+          data-available="true"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="10 × 10 cm each · set of 4"
+          data-description="Four small-format paintings that together form one meditation on circular form and warm colour. Geometric arcs in roasted pink and dusty lavender — quiet, repetitive, contemplative."
+          aria-label="Mini Canvas Series — Painting"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_1854.jpg" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--tall" data-slot="9"
+          data-src="arts lari/DSCF3546.JPG"
+          data-title="Rider"
+          data-category="Painting"
+          data-filter="design"
+          data-available="true"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="40 × 50 cm"
+          data-description="A woman rides through a world of flat colour and flowing form — terracotta, teal, off-white. A painting about freedom, movement, and the body in motion through an invented landscape."
+          aria-label="Rider — Painting"
+        ><span class="gallery__frame"><img src="arts lari/gallery/DSCF3546.JPG" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--square" data-slot="10"
+          data-src="arts lari/IMG_4991.jpg"
+          data-title="Intimacy"
+          data-category="Painting · Figurative"
+          data-filter="design"
+          data-available="true"
+          data-year="2022"
+          data-technique="Acrylic on canvas"
+          data-dimensions="20 × 20 cm"
+          data-description="Hands hold a strip of fabric against warm ochre bodies. The everyday becomes tender. A small painting about the quiet intimacy of ordinary moments and the eroticism of the mundane."
+          aria-label="Intimacy — Painting · Figurative"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_4991.jpg" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--narrow" data-slot="11"
+          data-src="arts lari/DSCF3651.JPG"
+          data-title="Commissioned Portrait"
+          data-category="Painting · Commission"
+          data-filter="design"
+          data-available="false"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="21 × 29.7 cm"
+          data-description="A woman holds a white bird against her chest, crowned by a golden halo on a dusty pink ground. Painted as a commission, this piece celebrates the sacred in the everyday feminine."
+          aria-label="Commissioned Portrait — Painting · Commission"
+        ><span class="gallery__frame"><img src="arts lari/gallery/DSCF3651.JPG" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--tall" data-slot="12"
+          data-src="arts lari/IMG_7451.JPG"
+          data-title="Woman &amp; Wolf"
+          data-category="Linoprint"
+          data-filter="linoprint"
+          data-available="true"
+          data-year="2023"
+          data-technique="Linoprint on paper"
+          data-dimensions="A3 · 29.7 × 42 cm"
+          data-description="A woman and a wolf merge in a dense, dreamlike composition. Cut by hand from linoleum, this piece explores the bond between the feminine and the wild — two forces that have never truly been separate."
+          aria-label="Woman &amp; Wolf — Linoprint"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_7451.JPG" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--square" data-slot="13"
+          data-src="arts lari/IMG_1854.jpg"
+          data-title="Mini Canvas Series"
+          data-category="Painting"
+          data-filter="design"
+          data-available="true"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="10 × 10 cm each · set of 4"
+          data-description="Four small-format paintings that together form one meditation on circular form and warm colour. Geometric arcs in roasted pink and dusty lavender — quiet, repetitive, contemplative."
+          aria-label="Mini Canvas Series — Painting"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_1854.jpg" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--tall" data-slot="14"
+          data-src="arts lari/IMG_4987.jpg"
+          data-title="The Eye"
+          data-category="Painting · Mixed Media"
+          data-filter="design"
+          data-available="true"
+          data-year="2023"
+          data-technique="Oil and mixed media on canvas"
+          data-dimensions="30 × 24 cm"
+          data-description="From a heavily textured white surface, a single eye looks out — framed in deep red, iris in teal. Raw, intimate, and quietly unsettling. A study in isolation and visibility."
+          aria-label="The Eye — Painting · Mixed Media"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_4987.jpg" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--narrow" data-slot="15"
+          data-src="arts lari/DSCF3546.JPG"
+          data-title="Rider"
+          data-category="Painting"
+          data-filter="design"
+          data-available="true"
+          data-year="2024"
+          data-technique="Acrylic on canvas"
+          data-dimensions="40 × 50 cm"
+          data-description="A woman rides through a world of flat colour and flowing form — terracotta, teal, off-white. A painting about freedom, movement, and the body in motion through an invented landscape."
+          aria-label="Rider — Painting"
+        ><span class="gallery__frame"><img src="arts lari/gallery/DSCF3546.JPG" alt="" loading="lazy" decoding="async" /></span></button>
+
+        <button type="button" class="gallery__cell gallery__cell--square" data-slot="16"
+          data-src="arts lari/IMG_7451.JPG"
+          data-title="Woman &amp; Wolf"
+          data-category="Linoprint"
+          data-filter="linoprint"
+          data-available="true"
+          data-year="2023"
+          data-technique="Linoprint on paper"
+          data-dimensions="A3 · 29.7 × 42 cm"
+          data-description="A woman and a wolf merge in a dense, dreamlike composition. Cut by hand from linoleum, this piece explores the bond between the feminine and the wild — two forces that have never truly been separate."
+          aria-label="Woman &amp; Wolf — Linoprint"
+        ><span class="gallery__frame"><img src="arts lari/gallery/IMG_7451.JPG" alt="" loading="lazy" decoding="async" /></span></button>
+
+      </div>
+    </section>
+
+  </main>
+  </div>
+
+  <div class="app-view app-view--immersive" id="immersiveView" hidden>
+    <div class="immersive-filters" id="immersiveFilters">
+      <div class="gallery__filters" role="group" aria-label="Filter by category">
+        <button type="button" class="gallery__filter" data-filter="linoprint">Linoprint</button>
+        <button type="button" class="gallery__filter" data-filter="design">Design</button>
+        <button type="button" class="gallery__filter" data-filter="photography">Photography</button>
+        <label class="gallery__available">
+          <input type="checkbox" class="gallery__checkbox" id="immersiveGalleryAvailable" />
+          <span>Show only available</span>
+        </label>
+      </div>
+    </div>
+    <div class="immersive-main" id="immersiveMain">
+      <div class="immersive-stage" id="immersiveStage">
+        <div class="immersive-track" id="immersiveTrack" aria-label="Gallery"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Art Modal ──────────────────────────── -->
+    <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle" data-lenis-prevent hidden>
+      <div class="modal" id="modal">
+        <div class="modal__controls">
+          <div class="modal__nav" id="modalNav">
+            <button type="button" class="modal__icon-btn modal__icon-btn--nav" id="modalPrev" aria-label="Previous work">
+              <svg class="modal__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <button type="button" class="modal__icon-btn modal__icon-btn--nav" id="modalNext" aria-label="Next work">
+              <svg class="modal__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <button type="button" class="modal__icon-btn modal__close" id="modalClose" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal__image-wrap">
+          <div class="modal__image-stage">
+            <img class="modal__image" id="modalImage" src="" alt="" />
+          </div>
+        </div>
+
+        <div class="modal__details">
+          <div class="modal__intro">
+            <p class="modal__category" id="modalCategory"></p>
+            <h2 class="modal__title" id="modalTitle"></h2>
+            <p class="modal__description" id="modalDescription"></p>
+          </div>
+
+          <div class="modal__meta">
+            <hr class="modal__divider" aria-hidden="true" />
+            <div class="modal__field">
+              <span class="modal__label">Year</span>
+              <span class="modal__value" id="modalYear"></span>
+            </div>
+            <div class="modal__field">
+              <span class="modal__label">Technique</span>
+              <span class="modal__value" id="modalTechnique"></span>
+            </div>
+            <div class="modal__field">
+              <span class="modal__label">Dimensions</span>
+              <span class="modal__value" id="modalDimensions"></span>
+            </div>
+            <hr class="modal__divider" aria-hidden="true" />
+          </div>
+
+          <div class="modal__footer">
+            <p class="modal__availability" id="modalAvailability"></p>
+            <a class="modal__cta" id="modalCta" href="mailto:oi.larissasan@gmail.com">
+              Acquire
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- ─── Scripts ───────────────────────────────── -->
+  <script>
+    // ── Intro Parallax (danielpetho/parallax-floating, vanilla port) ────────
+    (function () {
+      const SKIP_INTRO = true; // TODO: set false before launch
+
+      const intro = document.getElementById('intro');
+      const container = document.getElementById('introFloating');
+
+      if (!intro || !container) return;
+
+      if (SKIP_INTRO) {
+        document.body.classList.remove('is-intro-active');
+        intro.hidden = true;
+        window.dispatchEvent(new CustomEvent('lari:intro-complete'));
+        return;
+      }
+
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const pieces = Array.from(container.querySelectorAll('.intro__piece'));
+      const introImages = pieces.map(p => p.querySelector('img')).filter(Boolean);
+
+      const sensitivity = -0.6;
+      const easingFactor = 0.04;
+      const STAGGER_MS = 100;
+      const PIECE_ENTER_MS = 280;
+      const PIECE_EXIT_MS = 520;
+      const COPY_DELAY_MS = 400;
+      const COPY_ENTER_MS = 420;
+      const ENTRANCE_DURATION_MS = 1100;
+      const HOLD_MS = 1000;
+      const EXIT_STAGGER_MS = 90;
+      const EXIT_COPY_DELAY_MS = 360;
+      const OVERLAY_FADE_MS = 650;
+      const PRELOAD_MIN = 8;
+      const PRELOAD_TIMEOUT_MS = 2500;
+      const READY_PAUSE_MS = 80;
+
+      const mouse = { x: 0, y: 0 };
+      let raf = 0;
+      let finished = false;
+      let exiting = false;
+      let sequenceTimers = [];
+
+      const floats = pieces.map(el => ({
+        el,
+        depth: parseFloat(el.dataset.depth) || 1,
+        current: { x: 0, y: 0 },
+      }));
+
+      function schedule(fn, delay) {
+        sequenceTimers.push(setTimeout(fn, delay));
+      }
+
+      function updateMouse(clientX, clientY) {
+        const rect = container.getBoundingClientRect();
+        const cx = rect.left + rect.width * 0.5;
+        const cy = rect.top + rect.height * 0.5;
+        mouse.x = (clientX - cx) / (rect.width * 0.5);
+        mouse.y = (clientY - cy) / (rect.height * 0.5);
+      }
+
+      function onMouseMove(e) { updateMouse(e.clientX, e.clientY); }
+      function onTouchMove(e) {
+        if (!e.touches || !e.touches[0]) return;
+        updateMouse(e.touches[0].clientX, e.touches[0].clientY);
+      }
+
+      function tick() {
+        if (finished) return;
+
+        const rect = container.getBoundingClientRect();
+
+        floats.forEach(({ el, depth, current }) => {
+          const strength = (depth * sensitivity) / 20;
+          const targetX = mouse.x * rect.width * strength;
+          const targetY = mouse.y * rect.height * strength;
+
+          current.x += (targetX - current.x) * easingFactor;
+          current.y += (targetY - current.y) * easingFactor;
+
+          el.style.transform = `translate3d(${current.x}px, ${current.y}px, 0)`;
+        });
+
+        raf = requestAnimationFrame(tick);
+      }
+
+      function finish() {
+        if (finished) return;
+        finished = true;
+        cancelAnimationFrame(raf);
+        sequenceTimers.forEach(clearTimeout);
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('touchmove', onTouchMove);
+        document.body.classList.remove('is-intro-active');
+        intro.hidden = true;
+        window.dispatchEvent(new CustomEvent('lari:intro-complete'));
+      }
+
+      function beginExit() {
+        if (finished || exiting) return;
+        exiting = true;
+
+        intro.classList.add('is-leaving');
+        intro.classList.remove('is-ready');
+
+        const lastIndex = pieces.length - 1;
+        [...pieces].reverse().forEach((piece, i) => {
+          schedule(() => piece.classList.remove('is-visible'), EXIT_COPY_DELAY_MS + i * EXIT_STAGGER_MS);
+        });
+
+        const overlayFadeAt = EXIT_COPY_DELAY_MS + lastIndex * EXIT_STAGGER_MS + PIECE_EXIT_MS;
+        schedule(() => {
+          document.body.classList.remove('is-intro-active');
+          intro.classList.add('is-exiting');
+          intro.addEventListener('transitionend', finish, { once: true });
+          schedule(() => { if (!finished) finish(); }, OVERLAY_FADE_MS + 100);
+        }, overlayFadeAt);
+      }
+
+      function waitForIntroImages() {
+        const minRequired = Math.min(PRELOAD_MIN, introImages.length);
+
+        return new Promise((resolve) => {
+          let loaded = 0;
+          let settled = false;
+
+          const done = () => {
+            if (settled) return;
+            settled = true;
+            resolve();
+          };
+
+          const mark = () => {
+            loaded++;
+            if (loaded >= minRequired) done();
+          };
+
+          const timeout = setTimeout(done, PRELOAD_TIMEOUT_MS);
+
+          introImages.forEach((img) => {
+            if (img.complete) {
+              mark();
+            } else {
+              img.addEventListener('load', mark, { once: true });
+              img.addEventListener('error', mark, { once: true });
+            }
+          });
+
+          if (loaded >= minRequired) {
+            clearTimeout(timeout);
+            done();
+          }
+        });
+      }
+
+      function entranceCompleteMs() {
+        const lastPieceAt = (pieces.length - 1) * STAGGER_MS + PIECE_ENTER_MS;
+        const copyAt = COPY_DELAY_MS + COPY_ENTER_MS;
+        return Math.max(lastPieceAt, copyAt, ENTRANCE_DURATION_MS);
+      }
+
+      function revealCopy() {
+        intro.classList.add('is-ready');
+      }
+
+      function startSequence() {
+        const exitAt = entranceCompleteMs() + HOLD_MS;
+
+        if (reduceMotion) {
+          pieces.forEach(p => p.classList.add('is-visible'));
+          revealCopy();
+          schedule(beginExit, COPY_ENTER_MS + HOLD_MS);
+        } else {
+          pieces.forEach((piece, i) => {
+            schedule(() => piece.classList.add('is-visible'), i * STAGGER_MS);
+          });
+          schedule(revealCopy, COPY_DELAY_MS);
+          schedule(beginExit, exitAt);
+          window.addEventListener('mousemove', onMouseMove, { passive: true });
+          window.addEventListener('touchmove', onTouchMove, { passive: true });
+          raf = requestAnimationFrame(tick);
+        }
+      }
+
+      waitForIntroImages()
+        .then(() => new Promise(r => setTimeout(r, READY_PAUSE_MS)))
+        .then(startSequence);
+    })();
+
+    // ── Hero staggered entrance ─────────────────
+    (function () {
+      const hero = document.querySelector('.hero');
+      if (!hero) return;
+
+      const STAGGER_MS = 150;
+      const PIECE_FADE_MS = 500;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const enterPieces = [
+        document.querySelector('.app-shell .hero__logo'),
+        document.querySelector('.app-shell .hero__brand'),
+        document.querySelector('.app-shell .hero__nav'),
+        document.querySelector('.app-shell .site-nav__menu'),
+        document.getElementById('heroBio'),
+        document.getElementById('heroArt'),
+      ].filter(Boolean);
+
+      function runEntrance() {
+        if (reduceMotion) {
+          enterPieces.forEach(el => el.classList.add('is-visible'));
+          window.dispatchEvent(new CustomEvent('lari:hero-enter-complete'));
+          return;
+        }
+
+        enterPieces.forEach((el, i) => {
+          setTimeout(() => el.classList.add('is-visible'), i * STAGGER_MS);
+        });
+
+        const doneAt = (enterPieces.length - 1) * STAGGER_MS + PIECE_FADE_MS;
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('lari:hero-enter-complete'));
+        }, doneAt);
+      }
+
+      window.addEventListener('lari:intro-complete', runEntrance, { once: true });
+
+      if (document.getElementById('intro')?.hidden) runEntrance();
+    })();
+
+    // ── Hero parallax (bio + image, same feel as intro) ──
+    (function () {
+      const hero = document.querySelector('.hero');
+      const container = document.getElementById('heroGrid');
+
+      if (!hero || !container) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const pieces = Array.from(container.querySelectorAll('[data-depth]'));
+      if (!pieces.length) return;
+
+      const sensitivity = -0.6;
+      const easingFactor = 0.04;
+      const mouse = { x: 0, y: 0 };
+      let raf = 0;
+      let active = false;
+      let started = false;
+
+      const floats = pieces.map(el => ({
+        el,
+        depth: parseFloat(el.dataset.depth) || 1,
+        current: { x: 0, y: 0 },
+      }));
+
+      function updateMouse(clientX, clientY) {
+        const rect = container.getBoundingClientRect();
+        const cx = rect.left + rect.width * 0.5;
+        const cy = rect.top + rect.height * 0.5;
+        mouse.x = (clientX - cx) / (rect.width * 0.5);
+        mouse.y = (clientY - cy) / (rect.height * 0.5);
+      }
+
+      function onMouseMove(e) { updateMouse(e.clientX, e.clientY); }
+      function onTouchMove(e) {
+        if (!e.touches || !e.touches[0]) return;
+        updateMouse(e.touches[0].clientX, e.touches[0].clientY);
+      }
+
+      function tick() {
+        if (!active) {
+          raf = 0;
+          return;
+        }
+
+        const rect = container.getBoundingClientRect();
+
+        floats.forEach(({ el, depth, current }) => {
+          const strength = (depth * sensitivity) / 20;
+          const targetX = mouse.x * rect.width * strength;
+          const targetY = mouse.y * rect.height * strength;
+
+          current.x += (targetX - current.x) * easingFactor;
+          current.y += (targetY - current.y) * easingFactor;
+
+          el.style.transform = `translate3d(${current.x}px, ${current.y}px, 0)`;
+        });
+
+        raf = requestAnimationFrame(tick);
+      }
+
+      function activate() {
+        if (active) return;
+        active = true;
+        window.addEventListener('mousemove', onMouseMove, { passive: true });
+        window.addEventListener('touchmove', onTouchMove, { passive: true });
+        if (!raf) raf = requestAnimationFrame(tick);
+      }
+
+      function deactivate() {
+        active = false;
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('touchmove', onTouchMove);
+        cancelAnimationFrame(raf);
+        raf = 0;
+        floats.forEach(({ el, current }) => {
+          current.x = 0;
+          current.y = 0;
+          el.style.transform = '';
+        });
+      }
+
+      function start() {
+        if (started) return;
+        started = true;
+
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) activate();
+            else deactivate();
+          },
+          { threshold: 0.15 }
+        );
+        observer.observe(hero);
+      }
+
+      window.addEventListener('lari:hero-enter-complete', start, { once: true });
+    })();
+
+  </script>
+  <script src="js/mobile-menu.js"></script>
+  <script src="js/commission-overlay.js"></script>
+  <script type="module">
+    import { initGalleryFilters } from './js/gallery-filters.js';
+
+    initGalleryFilters({
+      filterRoot: document.querySelector('#works .gallery__filters'),
+      getCells: () => [...document.querySelectorAll('#galleryGrid .gallery__cell')],
+      emptyEl: document.getElementById('galleryEmpty'),
+      onApply: () => window.__refreshGalleryScroll?.(),
+    });
+  </script>
+
+  <script type="module" src="js/view-router.js"></script>
+  <script type="module" src="js/lenis-init.js"></script>
+  <script type="module">
+    import { initArtModal } from './js/modal.js';
+
+    window.__artModal = initArtModal({
+      itemSelector: '.gallery__cell',
+      isVisible: (el) => {
+        if (document.body.classList.contains('is-immersive-view')) {
+          return Boolean(el.closest('.immersive-unit--source'))
+            && !el.classList.contains('is-filtered-out');
+        }
+        if (el.closest('#homeView:not([hidden])')) {
+          return !el.classList.contains('is-filtered-out');
+        }
+        return false;
+      },
+      isAvailable: (el) => el.dataset.available === 'true',
+    });
+
+    document.querySelectorAll('#galleryGrid .gallery__cell').forEach((cell) => {
+      cell.addEventListener('click', () => {
+        if (cell.classList.contains('is-filtered-out')) return;
+        window.__artModal?.open(cell);
+      });
+    });
+  </script>
+  <script type="module" src="js/gallery-scroll.js"></script>
+  <script type="module" src="js/grid-overlay.js"></script>
+
+</body>
+</html>

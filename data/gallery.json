@@ -1,0 +1,112 @@
+{
+  "world": { "width": 2400, "height": 1600 },
+  "categories": [
+    {
+      "id": "linoprint",
+      "title": "Linoprint",
+      "description": "Hand-cut relief prints carved from linoleum — dense ink, bold contrast, and the slow rhythm of the blade. Each edition is printed by hand.",
+      "world": { "x": 280, "y": 220 },
+      "stage": { "width": 720, "height": 520 }
+    },
+    {
+      "id": "paintings",
+      "title": "Paintings",
+      "description": "Acrylic and mixed media on canvas — figurative work exploring the body, intimacy, and colour as emotional register. Small formats and large gestures.",
+      "world": { "x": 1080, "y": 360 },
+      "stage": { "width": 960, "height": 680 }
+    },
+    {
+      "id": "commissions",
+      "title": "Commissions",
+      "description": "Unique pieces made for collectors and clients — portraits, symbolic imagery, and personal narratives rendered in Larissa's visual language.",
+      "world": { "x": 520, "y": 920 },
+      "stage": { "width": 720, "height": 520 }
+    }
+  ],
+  "works": [
+    {
+      "id": "woman-wolf",
+      "categoryId": "linoprint",
+      "title": "Woman & Wolf",
+      "category": "Linoprint",
+      "year": "2023",
+      "technique": "Linoprint on paper",
+      "dimensions": "A3 · 29.7 × 42 cm",
+      "description": "A woman and a wolf merge in a dense, dreamlike composition. Cut by hand from linoleum, this piece explores the bond between the feminine and the wild — two forces that have never truly been separate.",
+      "src": "arts lari/IMG_7451.JPG",
+      "alt": "Linoprint — woman and wolf",
+      "forSale": true,
+      "objectPosition": "center"
+    },
+    {
+      "id": "mini-canvas",
+      "categoryId": "paintings",
+      "title": "Mini Canvas Series",
+      "category": "Painting",
+      "year": "2024",
+      "technique": "Acrylic on canvas",
+      "dimensions": "10 × 10 cm each · set of 4",
+      "description": "Four small-format paintings that together form one meditation on circular form and warm colour. Geometric arcs in roasted pink and dusty lavender — quiet, repetitive, contemplative.",
+      "src": "arts lari/IMG_1854.jpg",
+      "alt": "Mini canvas series in roasted pink",
+      "forSale": true,
+      "objectPosition": "center"
+    },
+    {
+      "id": "the-eye",
+      "categoryId": "paintings",
+      "title": "The Eye",
+      "category": "Painting · Mixed Media",
+      "year": "2023",
+      "technique": "Oil and mixed media on canvas",
+      "dimensions": "30 × 24 cm",
+      "description": "From a heavily textured white surface, a single eye looks out — framed in deep red, iris in teal. Raw, intimate, and quietly unsettling. A study in isolation and visibility.",
+      "src": "arts lari/IMG_4987.jpg",
+      "alt": "Mixed media — an eye on textured canvas",
+      "forSale": true,
+      "objectPosition": "center"
+    },
+    {
+      "id": "rider",
+      "categoryId": "paintings",
+      "title": "Rider",
+      "category": "Painting",
+      "year": "2024",
+      "technique": "Acrylic on canvas",
+      "dimensions": "40 × 50 cm",
+      "description": "A woman rides through a world of flat colour and flowing form — terracotta, teal, off-white. A painting about freedom, movement, and the body in motion through an invented landscape.",
+      "src": "arts lari/DSCF3546.JPG",
+      "alt": "Painting — woman riding a horse in flat colour",
+      "forSale": true,
+      "objectPosition": "center 25%"
+    },
+    {
+      "id": "intimacy",
+      "categoryId": "paintings",
+      "title": "Intimacy",
+      "category": "Painting · Figurative",
+      "year": "2022",
+      "technique": "Acrylic on canvas",
+      "dimensions": "20 × 20 cm",
+      "description": "Hands hold a strip of fabric against warm ochre bodies. The everyday becomes tender. A small painting about the quiet intimacy of ordinary moments and the eroticism of the mundane.",
+      "src": "arts lari/IMG_4991.jpg",
+      "alt": "Figurative painting — hands and fabric",
+      "forSale": true,
+      "objectPosition": "center"
+    },
+    {
+      "id": "commissioned-portrait",
+      "categoryId": "commissions",
+      "title": "Commissioned Portrait",
+      "category": "Painting · Commission",
+      "year": "2024",
+      "technique": "Acrylic on canvas",
+      "dimensions": "21 × 29.7 cm",
+      "description": "A woman holds a white bird against her chest, crowned by a golden halo on a dusty pink ground. Painted as a commission, this piece celebrates the sacred in the everyday feminine.",
+      "src": "arts lari/DSCF3651.JPG",
+      "alt": "Commissioned portrait — woman with halo",
+      "forSale": false,
+      "objectPosition": "center"
+    }
+  ]
+}
