@@ -25,7 +25,7 @@ function setNavActive(view) {
 window.__setNavActive = setNavActive;
 
 function isImmersiveRoute(hash) {
-  return hash === '#immersive';
+  return !hash || hash === '#' || hash === '#immersive';
 }
 
 function scrollToHash(hash) {
