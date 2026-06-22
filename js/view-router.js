@@ -144,7 +144,7 @@ async function applyRoute() {
 }
 
 function isAppRoute(href) {
-  return href === '#immersive' || href === '#works' || href === '#about';
+  return href === '#immersive' || href === '#about';
 }
 
 document.addEventListener('click', (event) => {
