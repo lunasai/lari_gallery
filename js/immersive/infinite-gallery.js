@@ -28,6 +28,10 @@ const WHEEL_SCALE = 0.85;
 const WHEEL_VELOCITY_BLEND = 0.45;
 const WHEEL_IMMEDIATE = 0.55;
 const STOP_VELOCITY = 0.06;
+const REVEAL_MARGIN = 96; // keep keyboard-focused art clear of the edges + filter bar
+const REVEAL_EASING = 0.12;
+// Hover/focus lift + caption only on desktop-like devices (see immersive.css)
+const HOVER_FEEDBACK_QUERY = '(hover: hover) and (min-width: 769px)';
 const PARALLAX_SENSITIVITY = -0.28;
 const PARALLAX_EASING = 0.028;
 const AMBIENT_SPEED = 0.18;
@@ -81,8 +85,38 @@ function createCell(work, { slot, variant }) {
   img.decoding = 'async';
   if (work.objectPosition) img.style.objectPosition = work.objectPosition;
   frame.appendChild(img);
+
+  // Revealed on hover / keyboard focus; positioned under the painted artwork.
+  const caption = document.createElement('span');
+  caption.className = 'gallery__caption';
+  caption.setAttribute('aria-hidden', 'true'); // the button's aria-label already says this
+  const title = document.createElement('span');
+  title.className = 'gallery__caption-title';
+  title.textContent = work.title;
+  const medium = document.createElement('span');
+  medium.className = 'gallery__caption-medium';
+  medium.textContent = work.technique;
+  caption.append(title, medium);
+  frame.appendChild(caption);
+
   btn.appendChild(frame);
   return btn;
+}
+
+// The <img> box includes object-fit: contain letterboxing; pin the caption to
+// the painted artwork's bottom-left edge instead (untransformed layout sizes).
+function positionCaption(cell) {
+  const img = cell?.querySelector('.gallery__frame img');
+  const caption = cell?.querySelector('.gallery__caption');
+  if (!img || !caption || !img.naturalWidth) return;
+  const boxW = img.offsetWidth;
+  const boxH = img.offsetHeight;
+  const scale = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight);
+  const paintedW = img.naturalWidth * scale;
+  const paintedH = img.naturalHeight * scale;
+  caption.style.left = `${img.offsetLeft + (boxW - paintedW) / 2}px`;
+  caption.style.top = `${img.offsetTop + (boxH + paintedH) / 2}px`;
+  caption.style.width = `${paintedW}px`;
 }
 
 function buildUnit(worksById) {
@@ -106,7 +140,11 @@ function buildUnit(worksById) {
 function cloneUnit(unit, { source }) {
   const clone = unit.cloneNode(true);
   clone.classList.toggle('immersive-unit--source', source);
-  if (!source) clone.setAttribute('aria-hidden', 'true');
+  if (!source) {
+    clone.setAttribute('aria-hidden', 'true');
+    // Tab moves through the source unit only; copies mirror its focus state.
+    clone.querySelectorAll('.gallery__cell').forEach((cell) => { cell.tabIndex = -1; });
+  }
   return clone;
 }
 
@@ -143,6 +181,8 @@ function createDragController({ stage, track, onDragChange }) {
   let ambientVx = 0;
   let ambientVy = 0;
   let lastInteractionAt = 0;
+  let panX = 0; // remaining keyboard-reveal pan, eased in by tick()
+  let panY = 0;
 
   function markInteraction() {
     lastInteractionAt = Date.now();
@@ -196,9 +236,22 @@ function createDragController({ stage, track, onDragChange }) {
   }
 
   function tick(now) {
-    // Hold the track still while the detail view is open so the artwork can fly
-    // back to the exact spot it left; drift ramps back in after the idle delay.
-    if (document.body.classList.contains('is-modal-open')) {
+    if (panX || panY) {
+      const stepX = Math.abs(panX) < 0.5 ? panX : panX * REVEAL_EASING;
+      const stepY = Math.abs(panY) < 0.5 ? panY : panY * REVEAL_EASING;
+      x += stepX;
+      y += stepY;
+      panX -= stepX;
+      panY -= stepY;
+    }
+
+    // Hold the track still while the detail view is open (so the artwork can fly
+    // back to the exact spot it left) or a tile has keyboard focus; drift ramps
+    // back in after the idle delay.
+    if (
+      document.body.classList.contains('is-modal-open')
+      || track.querySelector('.gallery__cell.is-keyboard-focus')
+    ) {
       markInteraction();
       vx = 0;
       vy = 0;
@@ -327,6 +380,14 @@ function createDragController({ stage, track, onDragChange }) {
   const onResize = () => measure();
   window.addEventListener('resize', onResize);
 
+  // Focusing an off-screen tile makes the browser scroll this clipped stage,
+  // which knocks the transform-based layout out of place. Position is owned by
+  // x/y; keyboard focus is brought into view via reveal() instead.
+  stage.addEventListener('scroll', () => {
+    stage.scrollTop = 0;
+    stage.scrollLeft = 0;
+  });
+
   const resizeObserver = new ResizeObserver(() => {
     measure();
   });
@@ -352,6 +413,34 @@ function createDragController({ stage, track, onDragChange }) {
     },
     remeasure() {
       return measure({ resetPosition: !hasLayout });
+    },
+    // Pan the least distance that brings one of `elements` fully into view.
+    reveal(elements) {
+      const bounds = stage.getBoundingClientRect();
+      let best = null;
+      elements.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const axis = (start, end, min, max) => {
+          if (start < min + REVEAL_MARGIN) return min + REVEAL_MARGIN - start;
+          if (end > max - REVEAL_MARGIN) return max - REVEAL_MARGIN - end;
+          return 0;
+        };
+        const dx = axis(r.left, r.right, bounds.left, bounds.right);
+        const dy = axis(r.top, r.bottom, bounds.top, bounds.bottom);
+        if (!best || Math.hypot(dx, dy) < Math.hypot(best.dx, best.dy)) best = { dx, dy };
+      });
+      if (!best || (!best.dx && !best.dy)) return;
+      markInteraction();
+      vx = 0;
+      vy = 0;
+      if (reduceMotion) {
+        x = wrapAxis(x + best.dx, unitW);
+        y = wrapAxis(y + best.dy, unitH);
+        apply();
+        return;
+      }
+      panX = best.dx;
+      panY = best.dy;
     },
     wasMoved() {
       return moved;
@@ -475,6 +564,11 @@ function createImmersiveParallax({ stage, track, isDragging, getAmbientStrength 
   };
 }
 
+function isInView(element) {
+  const r = element.getBoundingClientRect();
+  return r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight;
+}
+
 function getModalCell(track, cell) {
   if (!cell) return null;
   if (cell.closest('.immersive-unit--source')) return cell;
@@ -512,13 +606,48 @@ export async function initImmersiveGallery() {
   });
   parallaxController.start();
 
+  track.addEventListener('pointerover', (event) => {
+    positionCaption(event.target.closest?.('.gallery__cell'));
+  });
+
+  // Keyboard focus: highlight every copy of the focused tile (the visible one
+  // may be a clone) and pan the nearest copy into view.
+  function setKeyboardFocus(cell) {
+    track.querySelectorAll('.gallery__cell.is-keyboard-focus')
+      .forEach((el) => el.classList.remove('is-keyboard-focus'));
+    if (!cell) return;
+    const copies = [...track.querySelectorAll(`.gallery__cell[data-slot="${cell.dataset.slot}"]`)];
+    copies.forEach((el) => {
+      el.classList.add('is-keyboard-focus');
+      positionCaption(el);
+    });
+    // Measure after the stage's focus-scroll has been reset
+    requestAnimationFrame(() => {
+      dragController.reveal(copies.map((el) => el.querySelector('img') ?? el));
+    });
+  }
+
+  track.addEventListener('focusin', (event) => {
+    const cell = event.target.closest('.gallery__cell');
+    if (!matchMedia(HOVER_FEEDBACK_QUERY).matches) return;
+    if (cell?.matches(':focus-visible')) setKeyboardFocus(cell);
+  });
+  track.addEventListener('focusout', (event) => {
+    if (!track.contains(event.relatedTarget)) setKeyboardFocus(null);
+  });
+
   track.addEventListener('click', (event) => {
     if (dragController.wasMoved()) return;
     const cell = event.target.closest('.gallery__cell');
     if (!cell || !track.contains(cell)) return;
     const modalCell = getModalCell(track, cell);
     if (!modalCell || modalCell.classList.contains('is-filtered-out')) return;
-    window.__artModal?.open(modalCell, cell);
+    // From the keyboard the focused tile may be off-screen while a copy is
+    // visible; fly from the visible copy.
+    const source = cell.classList.contains('is-keyboard-focus')
+      ? [...track.querySelectorAll('.gallery__cell.is-keyboard-focus')].find(isInView) ?? cell
+      : cell;
+    window.__artModal?.open(modalCell, source);
   });
 
   initGalleryFilters({

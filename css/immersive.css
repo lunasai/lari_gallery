@@ -116,12 +116,66 @@
   padding: var(--page-padding);
 }
 
-.immersive-unit .gallery__cell:hover:not(.is-filtered-out) {
-  opacity: 0.88;
+.immersive-unit .gallery__frame {
+  position: relative;
+  will-change: transform;
 }
 
-.immersive-unit .gallery__frame {
-  will-change: transform;
+/* ─── Hover / keyboard focus: small lift + caption ─── */
+
+/* Let the caption hang into the gap below tall pieces */
+.immersive-unit .gallery__cell {
+  overflow: visible;
+  outline: none;
+}
+
+.immersive-unit .gallery__cell:hover,
+.immersive-unit .gallery__cell.is-keyboard-focus {
+  z-index: 1;
+}
+
+.immersive-unit .gallery__frame img {
+  transition: transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.gallery__caption {
+  position: absolute;
+  display: grid;
+  gap: 1px;
+  padding-top: 10px;
+  font-family: var(--font-serif);
+  letter-spacing: var(--font-serif-tracking);
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: left;
+  color: var(--black);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition:
+    opacity 300ms ease,
+    transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+}
+
+.gallery__caption-medium {
+  color: rgba(var(--black-rgb), 0.55);
+}
+
+/* Desktop-like devices only: on phones there's no real hover, and tap/focus
+   restore would leave captions stuck on the small tiles. Keep the media query
+   in sync with HOVER_FEEDBACK_QUERY in infinite-gallery.js.
+   .is-keyboard-focus is set by JS on every copy of the focused tile. */
+@media (hover: hover) and (min-width: 769px) {
+  .immersive-main:not(.is-dragging) .immersive-unit .gallery__cell:hover:not(.is-filtered-out) img,
+  .immersive-unit .gallery__cell.is-keyboard-focus:not(.is-filtered-out) img {
+    transform: scale(1.03);
+  }
+
+  .immersive-main:not(.is-dragging) .immersive-unit .gallery__cell:hover:not(.is-filtered-out) .gallery__caption,
+  .immersive-unit .gallery__cell.is-keyboard-focus:not(.is-filtered-out) .gallery__caption {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .immersive-unit .gallery__cell {
@@ -215,5 +269,11 @@
   .immersive-unit .gallery__cell {
     opacity: 1;
     transition: none;
+  }
+
+  .immersive-unit .gallery__frame img,
+  .gallery__caption {
+    transition: opacity 200ms ease;
+    transform: none !important;
   }
 }
