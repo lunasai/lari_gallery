@@ -96,12 +96,12 @@
 
   <header class="app-shell page-shell" id="appShell">
     <div class="hero__top site-nav" id="nav" role="navigation" aria-label="Main navigation">
-      <a href="#immersive" class="hero__logo hero__enter" aria-label="Larissa Sans — Gallery">
+      <a href="./" class="hero__logo hero__enter" aria-label="Larissa Sans — Gallery">
         <img class="hero__logo-mark" src="arts_lari/star-mark.png" alt="" />
       </a>
-      <a href="#" class="hero__brand site-nav__brand hero__enter">Larissa Sans</a>
+      <a href="./" class="hero__brand site-nav__brand hero__enter">Larissa Sans</a>
       <ul class="hero__nav link-rail hero__enter" role="list">
-        <li><a href="#immersive" data-nav-view="immersive">Gallery</a></li>
+        <li><a href="./" data-nav-view="immersive">Gallery</a></li>
         <li><a href="#about" data-nav-view="home">About</a></li>
       </ul>
       <button class="site-nav__menu hero__enter" id="navBurger" aria-label="Open menu" aria-expanded="false">
@@ -110,7 +110,7 @@
     </div>
 
     <div class="modal-backdrop hero__overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="Navigation menu" hidden>
-      <a href="#immersive" class="hero__overlay-link" data-nav-view="immersive">Gallery</a>
+      <a href="./" class="hero__overlay-link" data-nav-view="immersive">Gallery</a>
       <a href="#about" class="hero__overlay-link" data-nav-view="home">About</a>
       <div class="hero__overlay-foot">
         <a href="mailto:oi.larissasan@gmail.com">oi.larissasan@gmail.com</a>
@@ -245,8 +245,8 @@
         <ul class="record__list">
           <li class="record__row" data-img="arts_lari/about/jet-acrylic.jpg">
             <img class="record__thumb" src="arts_lari/about/jet-acrylic.jpg" alt="" loading="lazy" />
-            <span class="record__title">JET Acrylic</span>
-            <span class="record__meta">Just Eat Takeaway, Amsterdam — 2024</span>
+            <span class="record__title">Acrylic Workshop at Just Eat Takeaway</span>
+            <span class="record__meta">Amsterdam — 2024</span>
           </li>
           <li class="record__row" data-img="arts_lari/about/italian-silkhuis.jpg">
             <img class="record__thumb" src="arts_lari/about/italian-silkhuis.jpg" alt="" loading="lazy" />
@@ -395,6 +395,17 @@
             <a class="modal__cta" id="modalCta" href="mailto:oi.larissasan@gmail.com">
               Acquire
             </a>
+            <!-- Acquire: the visitor leaves their email here and Larissa replies -->
+            <div class="modal__enquiry" id="modalEnquiry" inert>
+              <div class="modal__enquiry-inner">
+                <form class="modal__enquiry-form" id="modalEnquiryForm" novalidate>
+                  <label class="visually-hidden" for="enquiryEmail">Your email</label>
+                  <input class="art-form__control modal__enquiry-input" id="enquiryEmail" type="email" name="email" autocomplete="email" placeholder="Your email" required />
+                  <button type="submit" class="art-form__send modal__enquiry-send" aria-disabled="true">Send <span class="art-form__arrow" aria-hidden="true">→</span></button>
+                </form>
+                <p class="modal__enquiry-status" id="modalEnquiryStatus" role="status">Larissa will reply with the price and details.</p>
+              </div>
+            </div>
             <button type="button" class="modal__scroll-hint" id="modalScrollHint">Scroll for the full project <span class="modal__scroll-hint-arrow" aria-hidden="true">↓</span></button>
           </div>
         </div>

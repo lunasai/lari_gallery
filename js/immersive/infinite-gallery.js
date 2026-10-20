@@ -369,11 +369,17 @@ function createDragController({ stage, track, onDragChange }) {
   function setPanning(next) {
     panning = next;
     stage.classList.toggle('is-dragging', next);
+    document.body.classList.toggle('is-gallery-dragging', next);
     onDragChange?.(next);
   }
 
+  // Native image drag / selection would hijack the pan (and tint the page).
+  stage.addEventListener('dragstart', (event) => event.preventDefault());
+  stage.addEventListener('selectstart', (event) => event.preventDefault());
+
   stage.addEventListener('pointerdown', (event) => {
     if (event.button !== 0) return;
+    window.getSelection()?.removeAllRanges();
     markInteraction();
     pointerDown = true;
     panning = false;

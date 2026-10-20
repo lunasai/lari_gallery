@@ -47,7 +47,7 @@ if (!reduceMotion) {
     anchor.addEventListener('click', (event) => {
       const href = anchor.getAttribute('href');
       if (!href || href === '#') return;
-      if (href === '#immersive' || href === '#works' || href === '#about') return;
+      if (href === '#works' || href === '#about') return;
 
       const target = document.querySelector(href);
       if (!target) return;

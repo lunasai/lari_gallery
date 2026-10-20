@@ -7,6 +7,20 @@
   background: transparent;
   touch-action: none;
   cursor: grab;
+  /* Dragging pans the gallery; never select or drag out text and images */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.immersive-main img {
+  -webkit-user-drag: none;
+}
+
+/* A drag that wanders over the header shouldn't select it either */
+body.is-gallery-dragging {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .immersive-main.is-dragging {

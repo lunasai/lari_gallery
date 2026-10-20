@@ -1957,6 +1957,114 @@ body.is-modal-open .immersive-main {
   }
 }
 
+/* Desktop hero: every artwork anchors to the same two lines — its bottom on
+   a shared baseline and its right edge against the gutter — so the label
+   beside it always starts in the same column, on the same baseline, whatever
+   the piece's proportions. */
+@media (min-width: 681px) {
+  .modal__image-stage {
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+
+  /* Landscape pieces would fill the half edge to edge; give them equal room
+     on both sides and centre them in the left area, both ways. */
+  .modal__image-wrap.is-landscape {
+    padding-inline: clamp(24px, 5vw, 80px);
+  }
+
+  .modal__image-wrap.is-landscape .modal__image-stage {
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* …with the label centred on the same line beside it */
+  .modal__details.is-centred {
+    justify-content: center;
+    padding-bottom: 0;
+  }
+}
+
+/* Acquire: an email field unfolds under the button (see modal.js) */
+.modal__enquiry {
+  display: grid;
+  grid-template-rows: 0fr;
+  width: 100%;
+  margin-top: -16px; /* no footer gap while folded */
+  transition:
+    grid-template-rows 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    margin-top 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal__enquiry.is-open {
+  grid-template-rows: 1fr;
+  margin-top: 0;
+}
+
+.modal__enquiry-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.modal__enquiry-form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  padding: 2px 3px 3px 0; /* room for focus rings inside the clip */
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+.modal__enquiry.is-open .modal__enquiry-form {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.5s ease 0.12s,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+}
+
+.modal__enquiry-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 18px;
+}
+
+.modal__enquiry-send {
+  flex: none;
+  padding: 10px 20px;
+}
+
+.modal__enquiry-status {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(var(--black-rgb), 0.66);
+}
+
+.modal__enquiry-status a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* After a successful send only the thank-you remains */
+.modal__enquiry.is-sent .modal__enquiry-form {
+  display: none;
+}
+
+.modal__enquiry.is-sent .modal__enquiry-status {
+  margin-top: 0;
+  color: var(--black);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal__enquiry,
+  .modal__enquiry-form,
+  .modal__enquiry.is-open .modal__enquiry-form {
+    transition: none;
+  }
+}
+
 /* Next project: closes a project page */
 .modal__next-project {
   display: flex;

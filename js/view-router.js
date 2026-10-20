@@ -24,9 +24,13 @@ function setNavActive(view) {
 
 window.__setNavActive = setNavActive;
 
+// The gallery is the home page: the bare address, no hash. ('#immersive' is
+// still accepted for old links and tidied away on load.)
 function isImmersiveRoute(hash) {
   return !hash || hash === '#' || hash === '#immersive';
 }
+
+const homeUrl = () => location.pathname + location.search;
 
 function scrollToHash(hash) {
   if (!hash || hash === '#') {
@@ -148,20 +152,21 @@ async function applyRoute() {
 }
 
 function isAppRoute(href) {
-  return href === '#immersive' || href === '#about';
+  return href === '#about';
 }
 
 document.addEventListener('click', (event) => {
-  const link = event.target.closest('a[href^="#"]');
+  const link = event.target.closest('a[href^="#"], a[href="./"]');
   if (!link) return;
 
   const href = link.getAttribute('href');
   if (!href) return;
 
-  if (href === '#') {
+  // Gallery (home): back to the bare address.
+  if (href === './' || href === '#' || href === '#immersive') {
     event.preventDefault();
     if (isTransitioning) return;
-    if (location.hash) history.pushState(null, '', '#');
+    if (location.hash) history.pushState(null, '', homeUrl());
     void applyRoute();
     return;
   }
@@ -187,6 +192,9 @@ window.addEventListener('hashchange', () => {
 });
 
 function bootRouter() {
+  if (location.hash === '#immersive' || location.hash === '#') {
+    history.replaceState(null, '', homeUrl());
+  }
   void applyRoute();
 }
 

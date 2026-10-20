@@ -1,5 +1,12 @@
 import { createModalMotion } from './modal-motion.js';
 
+// "Acquire" enquiries go through FormSubmit (formsubmit.co), a free gateway
+// that emails each submission to Larissa; no account, no backend. The first
+// submission sends her a one-time activation email she must confirm. After
+// that, FormSubmit offers a random alias for this URL that hides the address.
+const ENQUIRY_EMAIL = 'oi.larissasan@gmail.com';
+const ENQUIRY_ENDPOINT = `https://formsubmit.co/ajax/${ENQUIRY_EMAIL}`;
+
 export function initArtModal({ itemSelector, isVisible, isAvailable }) {
   const backdrop = document.getElementById('modalBackdrop');
   if (!backdrop) return null;
@@ -250,6 +257,8 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
       ? 'Available for sale – Price upon request.'
       : 'Not currently available for sale.';
 
+    resetEnquiry();
+    modalCta.removeAttribute('aria-expanded');
     if (isProject) {
       modalCta.textContent = 'Start a project';
       modalCta.href = '#commission';
@@ -259,6 +268,8 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
     } else if (available) {
       const subject = encodeURIComponent('Enquiry about: ' + card.dataset.title);
       modalCta.textContent = 'Acquire';
+      modalCta.setAttribute('aria-expanded', 'false');
+      modalCta.setAttribute('aria-controls', 'modalEnquiry');
       modalCta.href = 'mailto:oi.larissasan@gmail.com?subject=' + subject;
       modalCta.classList.remove('modal__cta--outline');
       modalCta.removeAttribute('target');
@@ -413,8 +424,15 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
   const modalArtBox = backdrop.querySelector('.modal__image-wrap');
   function alignDetailsToArt() {
     if (backdrop.hidden || !modalImage.naturalWidth || !modalDetails || !modalArtBox) return;
-    // Layout sizes, not rects: the image may be mid scale-in. It is centred in the box.
-    const inset = (modalArtBox.clientHeight - modalImage.offsetHeight) / 2;
+    // Wide pieces are centred with room on both sides; tall ones sit against
+    // the gutter (see .modal__image-wrap.is-landscape).
+    const landscape = modalImage.naturalWidth > modalImage.naturalHeight * 1.05;
+    modalArtBox.classList.toggle('is-landscape', landscape);
+    modalDetails.classList.toggle('is-centred', landscape);
+    // Layout sizes, not rects: the image may be mid scale-in. Measured from the
+    // image's actual position, so it holds for any alignment in the box.
+    const inset = (modalArtBox.offsetTop + modalArtBox.clientHeight)
+      - (modalImage.offsetTop + modalImage.offsetHeight);
     modalDetails.style.setProperty('--art-inset', `${Math.max(0, Math.round(inset))}px`);
   }
   modalImage.addEventListener('load', alignDetailsToArt);
@@ -423,7 +441,13 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
   modalClose?.addEventListener('click', closeModal);
 
   modalCta?.addEventListener('click', async (event) => {
-    if (!activeElement || isAvailable(activeElement)) return;
+    if (!activeElement) return;
+    // Acquire (available pieces): unfold the email field instead of leaving.
+    if (isAvailable(activeElement) && !activeElement.dataset.project) {
+      event.preventDefault();
+      setEnquiryOpen(!enquiry?.classList.contains('is-open'));
+      return;
+    }
     event.preventDefault();
     await closeModal();
     window.openCommissionOverlay?.();
@@ -431,6 +455,78 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
 
   backdrop.addEventListener('click', (e) => {
     if (e.target === backdrop) closeModal();
+  });
+
+  // ── Acquire: an email field unfolds under the button; the visitor stays here.
+  const enquiry = document.getElementById('modalEnquiry');
+  const enquiryForm = document.getElementById('modalEnquiryForm');
+  const enquiryEmail = document.getElementById('enquiryEmail');
+  const enquirySend = enquiryForm?.querySelector('.modal__enquiry-send');
+  const enquiryStatus = document.getElementById('modalEnquiryStatus');
+  const enquiryNote = enquiryStatus?.textContent ?? '';
+  const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+  function setEnquiryOpen(open) {
+    if (!enquiry) return;
+    enquiry.classList.toggle('is-open', open);
+    enquiry.inert = !open;
+    modalCta?.setAttribute('aria-expanded', String(open));
+    if (open) setTimeout(() => enquiryEmail?.focus({ preventScroll: true }), 320);
+  }
+
+  function resetEnquiry() {
+    setEnquiryOpen(false);
+    enquiry?.classList.remove('is-sent');
+    if (enquiryForm) enquiryForm.reset();
+    enquirySend?.setAttribute('aria-disabled', 'true');
+    if (enquiryStatus) enquiryStatus.textContent = enquiryNote;
+  }
+
+  enquiryEmail?.addEventListener('input', () => {
+    enquirySend?.setAttribute('aria-disabled', String(!isEmail(enquiryEmail.value)));
+  });
+
+  enquiryForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!activeElement || !enquiryEmail) return;
+    const email = enquiryEmail.value.trim();
+    if (!isEmail(email)) {
+      enquiryStatus.textContent = 'Please add your email so Larissa can reply.';
+      enquiryEmail.focus();
+      return;
+    }
+    const title = activeElement.dataset.title;
+
+    enquirySend?.setAttribute('aria-disabled', 'true');
+    enquiryStatus.textContent = 'Sending…';
+    try {
+      // FormSubmit sets the visitor's "email" as the reply-to, so Larissa can
+      // simply hit Reply.
+      const res = await fetch(ENQUIRY_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: `Acquire: ${title}`,
+          _template: 'box',
+          artwork: title,
+          email,
+          message: `I'd like to acquire "${title}". Please send me the price and details.`,
+          page: location.href,
+        }),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || String(result.success) !== 'true') throw new Error(result.message || String(res.status));
+      enquiry.classList.add('is-sent');
+      enquiryStatus.textContent = 'Thank you — Larissa will be in touch soon.';
+    } catch {
+      enquirySend?.setAttribute('aria-disabled', 'false');
+      enquiryStatus.innerHTML = '';
+      enquiryStatus.append('Something went wrong. You can write to ');
+      const link = document.createElement('a');
+      link.href = `mailto:${ENQUIRY_EMAIL}?subject=${encodeURIComponent(`Acquire: ${title}`)}`;
+      link.textContent = ENQUIRY_EMAIL;
+      enquiryStatus.append(link, ' instead.');
+    }
   });
 
   // Touch: a clear sideways swipe pages between works (vertical stays scroll).
@@ -460,6 +556,9 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
       closeModal();
       return;
     }
+
+    // Typing in the enquiry field: arrows move the caret, not the gallery.
+    if (e.target.closest?.('input, textarea')) return;
 
     if (e.key === 'ArrowRight') {
       e.preventDefault();
