@@ -107,6 +107,76 @@
       "alt": "Commissioned portrait — woman with halo",
       "forSale": false,
       "objectPosition": "center"
+    },
+    {
+      "id": "afternoon-nap",
+      "categoryId": "paintings",
+      "title": "Afternoon Nap",
+      "category": "Painting · Figurative",
+      "year": "2026",
+      "technique": "Acrylic on canvas",
+      "dimensions": "—",
+      "description": "A man sleeps in folds of white sheets while a black cat's tail curls into the frame. A quiet painting about rest, closeness, and the small company that keeps us.",
+      "src": "arts lari/IMG_1332-2.jpg",
+      "alt": "Painting — a man asleep on white sheets with a cat's tail",
+      "forSale": false,
+      "objectPosition": "center"
+    },
+    {
+      "id": "grenade",
+      "categoryId": "paintings",
+      "title": "Grenade",
+      "category": "Painting",
+      "year": "2020",
+      "technique": "Acrylic on canvas",
+      "dimensions": "—",
+      "description": "A grenade nested in green leaves on a coral ground — something violent made almost decorative. A small canvas that sits between threat and bloom.",
+      "src": "arts lari/IMG_2436.jpg",
+      "alt": "Small painting — a grenade among green leaves on coral pink",
+      "forSale": false,
+      "objectPosition": "center"
+    },
+    {
+      "id": "horned-crown",
+      "categoryId": "linoprint",
+      "title": "Horned Crown",
+      "category": "Linoprint",
+      "year": "2020",
+      "technique": "Linoprint on paper",
+      "dimensions": "—",
+      "description": "A woman's face emerges from dense carved lines beneath a horned skull. Ancestral, watchful, and crowned by the animal above her.",
+      "src": "arts lari/IMG_2611.jpg",
+      "alt": "Linoprint — a woman beneath a horned skull",
+      "forSale": false,
+      "objectPosition": "center"
+    },
+    {
+      "id": "fox-moon",
+      "categoryId": "linoprint",
+      "title": "Fox & Moon",
+      "category": "Linoprint",
+      "year": "2020",
+      "technique": "Linoprint on paper",
+      "dimensions": "—",
+      "description": "A woman and a fox lean into one another under a crescent moon, leaves drifting at their feet. Another meeting of the feminine and the wild, cut by hand.",
+      "src": "arts lari/IMG_2614.jpg",
+      "alt": "Linoprint — a woman and a fox under a crescent moon",
+      "forSale": false,
+      "objectPosition": "center"
+    },
+    {
+      "id": "hair-brush",
+      "categoryId": "design",
+      "title": "Hair Brush",
+      "category": "Illustration",
+      "year": "2025",
+      "technique": "Digital illustration",
+      "dimensions": "—",
+      "description": "A tortoiseshell hair brush rests on a ruffled cream cloth against deep red — an everyday ritual object, drawn with the care of a still life.",
+      "src": "arts lari/hair_brush.jpg",
+      "alt": "Illustration — a hair brush on a ruffled cloth against red",
+      "forSale": false,
+      "objectPosition": "center"
     }
   ]
 }
