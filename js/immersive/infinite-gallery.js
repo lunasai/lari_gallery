@@ -196,7 +196,13 @@ function createDragController({ stage, track, onDragChange }) {
   }
 
   function tick(now) {
-    if (!pointerDown && !reduceMotion && !document.hidden) {
+    // Hold the track still while the detail view is open so the artwork can fly
+    // back to the exact spot it left; drift ramps back in after the idle delay.
+    if (document.body.classList.contains('is-modal-open')) {
+      markInteraction();
+      vx = 0;
+      vy = 0;
+    } else if (!pointerDown && !reduceMotion && !document.hidden) {
       const moving = Math.abs(vx) >= STOP_VELOCITY || Math.abs(vy) >= STOP_VELOCITY;
 
       if (moving) {
@@ -410,6 +416,11 @@ function createImmersiveParallax({ stage, track, isDragging, getAmbientStrength 
       return;
     }
 
+    // Freeze the source tile while the artwork detail view owns the interaction.
+    if (document.body.classList.contains('is-modal-open')) {
+      raf = requestAnimationFrame(tick);
+      return;
+    }
     const rect = stage.getBoundingClientRect();
     const dragging = isDragging();
     const ambient = document.hidden ? 0 : (getAmbientStrength?.() ?? 0);
@@ -507,7 +518,7 @@ export async function initImmersiveGallery() {
     if (!cell || !track.contains(cell)) return;
     const modalCell = getModalCell(track, cell);
     if (!modalCell || modalCell.classList.contains('is-filtered-out')) return;
-    window.__artModal?.open(modalCell);
+    window.__artModal?.open(modalCell, cell);
   });
 
   initGalleryFilters({

@@ -1,3 +1,5 @@
+import { createModalMotion } from './modal-motion.js';
+
 export function initArtModal({ itemSelector, isVisible, isAvailable }) {
   const backdrop = document.getElementById('modalBackdrop');
   if (!backdrop) return null;
@@ -11,6 +13,12 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
   let currentIndex = 0;
   let activeElement = null;
   let isOpen = false;
+  let opener = null; // tile the artwork flew from (may be a visible copy of the real tile)
+  let focusReturn = null; // tabbable tile to restore focus to
+  let thumbnail = null;
+  let revision = 0;
+  let previousOverflow = '';
+  const motion = createModalMotion(backdrop);
 
   function getVisibleItems() {
     return [...document.querySelectorAll(itemSelector)].filter(isVisible);
@@ -72,11 +80,16 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
 
   function goToIndex(index) {
     const items = getVisibleItems();
+    if (!isOpen) return;
     if (!items.length) {
       closeModal();
       return;
     }
 
+    revision += 1;
+    motion.cancel();
+    backdrop.classList.add('is-open');
+    thumbnail = null; // Next/previous may refer to an off-screen repeated tile.
     currentIndex = ((index % items.length) + items.length) % items.length;
     renderModal(items[currentIndex]);
   }
@@ -94,36 +107,85 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
     if (open) window.__lenis?.stop?.();
   }
 
-  function openModal(card) {
+  async function openModal(card, source = card) {
     const items = getVisibleItems();
-    if (!items.length || !isVisible(card)) return;
+    if (!items.length || !isVisible(card) || isOpen) return;
 
+    const token = ++revision;
+    motion.cancel();
+    if (backdrop.hidden) previousOverflow = document.body.style.overflow;
+    opener = source;
+    focusReturn = card;
+    thumbnail = source.querySelector('img');
     renderModal(card);
-
     backdrop.hidden = false;
     backdrop.scrollTop = 0;
     document.body.style.overflow = 'hidden';
     setModalOpenState(true);
     isOpen = true;
-    requestAnimationFrame(() => backdrop.classList.add('is-open'));
+    modalClose?.focus({ preventScroll: true });
+
+    // Wait for intrinsic dimensions, but let Escape/close invalidate this open.
+    const image = document.getElementById('modalImage');
+    await Promise.race([image.decode().catch(() => {}), new Promise(resolve => setTimeout(resolve, 150))]);
+    if (token !== revision || !isOpen) return;
+    backdrop.classList.add('is-open');
+    await motion.run(true, thumbnail);
+    if (token === revision) motion.cancel();
   }
 
-  function closeModal() {
-    if (backdrop.hidden) return;
+  function isOnScreen(element) {
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0 &&
+      rect.left >= 0 && rect.top >= 0 &&
+      rect.right <= innerWidth && rect.bottom <= innerHeight;
+  }
 
+  // After next/previous the original tile shows a different work. Return to an
+  // on-screen tile of the current work instead: the opener if it matches, else
+  // the copy nearest to where the opener sits.
+  function findReturnThumbnail() {
+    if (!activeElement) return null;
+    const src = activeElement.dataset.src;
+    const candidates = [...document.querySelectorAll(itemSelector)]
+      .filter(el => el.dataset.src === src && !el.closest('[hidden]'))
+      .map(el => el.querySelector('img'))
+      .filter(img => img?.complete && img.naturalWidth && isOnScreen(img));
+    if (!candidates.length) return null;
+
+    const openerImg = opener?.querySelector('img');
+    if (candidates.includes(openerImg)) return openerImg;
+
+    const anchor = (openerImg ?? backdrop).getBoundingClientRect();
+    const ax = anchor.left + anchor.width / 2;
+    const ay = anchor.top + anchor.height / 2;
+    const distance = (img) => {
+      const r = img.getBoundingClientRect();
+      return Math.hypot(r.left + r.width / 2 - ax, r.top + r.height / 2 - ay);
+    };
+    return candidates.reduce((best, img) => (distance(img) < distance(best) ? img : best));
+  }
+
+  async function closeModal() {
+    if (backdrop.hidden || !isOpen) return;
+    const token = ++revision;
     isOpen = false;
-    activeElement = null;
-    setModalOpenState(false);
+    thumbnail ??= findReturnThumbnail();
+    const closingOpacity = getComputedStyle(backdrop).opacity;
+    const interruptedRect = motion.cancel();
+    await motion.run(false, thumbnail, interruptedRect, closingOpacity);
+    if (token !== revision) return;
+    backdrop.hidden = true;
     backdrop.classList.remove('is-open');
-    backdrop.addEventListener(
-      'transitionend',
-      () => {
-        backdrop.hidden = true;
-        backdrop.scrollTop = 0;
-        document.body.style.overflow = '';
-      },
-      { once: true }
-    );
+    motion.cancel();
+    backdrop.scrollTop = 0;
+    document.body.style.overflow = previousOverflow;
+    setModalOpenState(false);
+    activeElement = null;
+    if (focusReturn?.isConnected) focusReturn.focus({ preventScroll: true });
+    opener = null;
+    focusReturn = null;
+    thumbnail = null;
   }
 
   function syncWithFilters() {
@@ -142,7 +204,13 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
     }
 
     const next = findNextVisibleAfter(activeElement);
-    if (next) renderModal(next);
+    if (next) {
+      revision += 1;
+      motion.cancel();
+      thumbnail = null;
+      backdrop.classList.add('is-open');
+      renderModal(next);
+    }
     else closeModal();
   }
 
@@ -150,10 +218,10 @@ export function initArtModal({ itemSelector, isVisible, isAvailable }) {
   modalNext?.addEventListener('click', goNext);
   modalClose?.addEventListener('click', closeModal);
 
-  modalCta?.addEventListener('click', (event) => {
+  modalCta?.addEventListener('click', async (event) => {
     if (!activeElement || isAvailable(activeElement)) return;
     event.preventDefault();
-    closeModal();
+    await closeModal();
     window.openCommissionOverlay?.();
   });
 
