@@ -10,8 +10,6 @@ const STORAGE_KEY = 'lari:dev-panel';
 
 // weights = the weights actually loaded (Google Fonts URL / local @font-face)
 const FONTS = {
-  spectral: { label: 'Spectral', stack: "'Spectral', serif", tracking: -0.05,
-              weights: [300, 400, 500, 600, 700, 800] },
   clash:    { label: 'Clash Display', stack: "'Clash Display', sans-serif", tracking: -0.01,
               weights: [200, 300, 400, 500, 600, 700] },
   dmsans:   { label: 'DM Sans', stack: "'DM Sans', sans-serif", tracking: 0,
@@ -31,11 +29,16 @@ const DEFAULTS = {
 };
 
 function load() {
+  let state;
   try {
-    return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') };
+    state = { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') };
   } catch {
-    return { ...DEFAULTS };
+    state = { ...DEFAULTS };
   }
+  // A font saved earlier may no longer be offered (e.g. Spectral, removed).
+  if (!FONTS[state.displayFont]) state.displayFont = DEFAULTS.displayFont;
+  if (!FONTS[state.bodyFont]) state.bodyFont = DEFAULTS.bodyFont;
+  return state;
 }
 
 function save(state) {
@@ -44,9 +47,9 @@ function save(state) {
 
 // state key → [CSS custom property, value formatter]
 const VARS = {
-  displayFont: ['--font-serif', (v) => FONTS[v].stack],
+  displayFont: ['--font-display', (v) => FONTS[v].stack],
   bodyFont:    ['--font-body', (v) => FONTS[v].stack],
-  tracking:    ['--font-serif-tracking', (v) => `${v}em`],
+  tracking:    ['--font-display-tracking', (v) => `${v}em`],
   columns:     ['--gallery-columns', (v) => `${v}`],
   gap:         ['--gallery-gap', (v) => `${v}px`],
   stagger:     ['--gallery-stagger', (v) => `${v}px`],
@@ -71,7 +74,7 @@ function getDisplaySelectors() {
     try { rules = sheet.cssRules; } catch { continue; } // cross-origin (Google Fonts)
     for (const rule of rules) {
       const family = rule.style?.fontFamily || '';
-      if (/--font-(serif|display)/.test(family)) found.push(rule.selectorText);
+      if (/--font-display/.test(family)) found.push(rule.selectorText);
     }
   }
   displaySelectors = found.join(', ');
@@ -170,7 +173,7 @@ function init() {
   panel.innerHTML = `
     <div class="dev-panel__body" ${state.open ? '' : 'hidden'}>
       <h3>Typography</h3>
-      <label>Display / serif font
+      <label>Display font
         <select data-key="displayFont">${fontOptions(state.displayFont)}</select>
       </label>
       <label>Body font
@@ -270,15 +273,4 @@ function init() {
   sync();
 }
 
-// Spectral is only a dev-panel option, so only the panel loads it.
-function loadDevFonts() {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap';
-  document.head.appendChild(link);
-}
-
-if (IS_DEV) {
-  loadDevFonts();
-  init();
-}
+if (IS_DEV) init();

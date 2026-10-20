@@ -55,10 +55,8 @@
   --hero-bg:     #f5efe5; /* hero section background */
   --accent-dot:  #b97864; /* name punctuation */
 
-  --font-display: var(--font-serif);
-  /* --font-serif is the site's display face (name kept for the dev panel) */
-  --font-serif:   'Clash Display', sans-serif;
-  --font-serif-tracking: -0.01em;
+  --font-display: 'Clash Display', sans-serif; /* display face (no serifs on the site) */
+  --font-display-tracking: -0.01em;
   --font-display-weight: 400;
   --font-body:    'DM Sans', sans-serif;
 
@@ -130,6 +128,18 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+/* Avoid lone words and ragged last lines in running text and headings */
+p,
+li,
+h1,
+h2,
+h3,
+h4,
+figcaption,
+blockquote {
+  text-wrap: pretty;
 }
 
 /* Paper texture overlay (no assets, non-directional, subtle) */
@@ -259,9 +269,9 @@ ul {
 .hero__bio,
 .contact__headline,
 .modal__title {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-weight: var(--font-display-weight);
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
 }
 
 /* Small type (DM Sans): links, labels, captions and supporting copy */
@@ -359,7 +369,7 @@ ul {
   font-size: clamp(20px, 5vw, 24px);
   line-height: 1.1;
   color: var(--black);
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
   transition: opacity 0.2s ease;
 }
 
@@ -733,7 +743,7 @@ body.is-modal-open .immersive-main {
   font-family: var(--font-display);
   font-size: clamp(20px, 2vw, 26px);
   font-weight: var(--font-display-weight);
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
   line-height: 1.2;
   color: var(--black);
   transition:
@@ -1376,7 +1386,7 @@ body.is-modal-open .immersive-main {
   height: 40px;
   background: transparent;
   border: none;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 20px;
   line-height: 1;
   letter-spacing: -0.02em;
@@ -1543,7 +1553,7 @@ body.is-modal-open .immersive-main {
   font-weight: var(--font-display-weight);
   font-size: clamp(24px, 5vw, 32px);
   line-height: 32px;
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
   color: var(--black);
 }
 
@@ -2102,7 +2112,7 @@ body.is-modal-open .immersive-main {
   font-weight: var(--font-display-weight);
   font-size: clamp(26px, 3.4vw, 44px);
   line-height: 1.1;
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
 }
 
 .modal__next-arrow {
@@ -3271,7 +3281,7 @@ body.is-intro-active > :not(#intro) {
   font-weight: var(--font-display-weight);
   font-size: clamp(20px, 1.7vw, 24px);
   line-height: 1.3;
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
   color: var(--black);
 }
 
@@ -3440,7 +3450,7 @@ body.is-intro-active > :not(#intro) {
   font-weight: var(--font-display-weight);
   font-size: 20px;
   line-height: 1.3;
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
   color: var(--black);
   outline: none;
   transition: border-color 0.25s ease;
@@ -3475,7 +3485,7 @@ body.is-intro-active > :not(#intro) {
   font-weight: var(--font-display-weight);
   font-size: 20px;
   line-height: 1.3;
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
   text-align: left;
   color: var(--black);
   cursor: pointer;
@@ -3553,7 +3563,7 @@ body.is-intro-active > :not(#intro) {
   font-weight: var(--font-display-weight);
   font-size: 16px;
   line-height: 1.2;
-  letter-spacing: var(--font-serif-tracking);
+  letter-spacing: var(--font-display-tracking);
   color: var(--black);
   cursor: pointer;
   opacity: 0;
