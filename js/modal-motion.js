@@ -55,12 +55,12 @@ export function createModalMotion(backdrop) {
   }
 
   async function run(open, thumbnail, interruptedRect, closingOpacity) {
-    const duration = reduced.matches ? 0 : (open ? 680 : 540);
+    const duration = reduced.matches ? 0 : (open ? 860 : 620);
     const source = open ? artworkRect(thumbnail) : (interruptedRect || artworkRect(image));
     const target = open ? artworkRect(image) : artworkRect(thumbnail);
     const fade = backdrop.animate(
       [{ opacity: open ? 0 : (closingOpacity ?? getComputedStyle(backdrop).opacity) }, { opacity: open ? 1 : 0 }],
-      { duration: reduced.matches ? 0 : (open ? 480 : 540), easing: 'cubic-bezier(.25, .1, .25, 1)', fill: 'both' }
+      { duration: reduced.matches ? 0 : (open ? 620 : 560), easing: 'cubic-bezier(.33, 0, .2, 1)', fill: 'both' }
     );
     animations.push(fade);
     // Differently cropped assets dissolve instead of stretching into one another.
@@ -83,17 +83,65 @@ export function createModalMotion(backdrop) {
       animations.push(flight.animate([
         { transform: 'translate(0, 0) scale(1)' },
         { transform: `translate(${target.left - source.left}px, ${target.top - source.top}px) scale(${target.width / source.width})` },
-      ], { duration, easing: 'cubic-bezier(.22, .61, .36, 1)', fill: 'both' }));
-      const details = backdrop.querySelector('.modal__details');
-      if (open && details) {
-        animations.push(details.animate(
-          [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 400, delay: 140, easing: 'cubic-bezier(.22, .61, .36, 1)', fill: 'both' }
-        ));
-      }
+      ], { duration, easing: open ? 'cubic-bezier(.22, 1, .36, 1)' : 'cubic-bezier(.45, 0, .2, 1)', fill: 'both' }));
     }
+    if (open && duration) enterDetails(220);
     await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
   }
 
-  return { run, cancel };
+  // Details arrive line by line: category, title, description, meta, actions.
+  // When paging between works, the new image also fades in (no flight then),
+  // drifting in from the side it was paged from: next from the right.
+  function enterDetails(delay = 0, { withImage = false, direction = 0 } = {}) {
+    if (reduced.matches) return;
+    if (withImage) {
+      const from = `translateX(${direction * 32}px) scale(0.99)`;
+      animations.push(image.animate(
+        [{ opacity: 0, transform: from }, { opacity: 1, transform: 'none' }],
+        { duration: 900, delay: 60, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' }
+      ));
+    }
+    const parts = backdrop.querySelectorAll(
+      '.modal__category, .modal__title, .modal__description, .modal__meta, .modal__footer'
+    );
+    parts.forEach((part, index) => {
+      animations.push(part.animate(
+        [{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'translateY(0)' }],
+        { duration: 780, delay: delay + index * 70, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' }
+      ));
+    });
+  }
+
+  // Paging: a copy of the outgoing artwork stays where it was and eases away
+  // toward the side being left, so the new piece crossfades in over it
+  // instead of appearing on an empty wall.
+  let ghost = null;
+  function leaveImage(direction = 0) {
+    ghost?.remove();
+    ghost = null;
+    if (reduced.matches || image.style.visibility === 'hidden') return;
+    const rect = image.getBoundingClientRect();
+    if (!rect.width || !rect.height || !image.currentSrc) return;
+    const copy = image.cloneNode();
+    copy.removeAttribute('id');
+    copy.alt = '';
+    copy.setAttribute('aria-hidden', 'true');
+    Object.assign(copy.style, {
+      position: 'fixed', left: `${rect.left}px`, top: `${rect.top}px`,
+      width: `${rect.width}px`, height: `${rect.height}px`,
+      margin: '0', maxWidth: 'none', maxHeight: 'none',
+      zIndex: '201', pointerEvents: 'none',
+    });
+    document.body.appendChild(copy);
+    ghost = copy;
+    copy.animate(
+      [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateX(${direction * -24}px) scale(0.99)` }],
+      { duration: 560, easing: 'cubic-bezier(.33, 0, .2, 1)', fill: 'both' }
+    ).finished.catch(() => {}).then(() => {
+      copy.remove();
+      if (ghost === copy) ghost = null;
+    });
+  }
+
+  return { run, cancel, enterDetails, leaveImage };
 }

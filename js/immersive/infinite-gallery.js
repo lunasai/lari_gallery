@@ -1,13 +1,16 @@
-import { initGalleryFilters } from '../gallery-filters.js';
 import { layoutMasonry } from './masonry.js';
 
-// One repeating unit, in reading order. The masonry layout assigns columns;
-// a work may repeat, but never directly above itself.
+// One repeating unit, in reading order: every work once. The masonry layout
+// assigns columns (a work could repeat here, but never directly above itself).
+// Brand & Design projects (one cover tile each) are spread between artworks.
 const TILE_SEQUENCE = [
-  'woman-wolf', 'afternoon-nap', 'the-eye', 'horned-crown',
-  'mini-canvas', 'grenade', 'rider', 'hair-brush',
-  'fox-moon', 'commissioned-portrait', 'intimacy', 'the-eye',
-  'rider', 'hair-brush', 'afternoon-nap', 'mini-canvas',
+  'camisa-7', 'the-eye', 'brand-nuuh', 'blush',
+  'horned-crown', 'brand-guidemi', 'senhor-do-bonfim', 'mini-canvas',
+  'brand-pandala', 'tropical-girl', 'afternoon-nap', 'brand-isabela-lemos',
+  'ochre', 'grenade', 'brand-arigatou-ramen', 'fox-moon',
+  'rider', 'brand-wedding-design', 'the-eye-ii', 'hair-brush',
+  'brand-buttersweet', 'patchwork', 'intimacy', 'brand-dale',
+  'commissioned-portrait', 'brand-sik', 'brand-maria-doces',
 ];
 
 // Units tiled 3 across × 4 down. Staggered columns overflow a unit's bottom
@@ -45,14 +48,32 @@ function depthForSlot(slot) {
   return 0.28 + ((slot - 1) % 5) * 0.07;
 }
 
-function galleryThumb(src) {
+// Web versions of each artwork, generated from the original in `src`:
+// thumb (320px, instant placeholder), md (1000px, grid), lg (2000px, detail view).
+function galleryImage(src, size = 'thumb') {
   const file = src.split('/').pop();
-  return `arts lari/gallery/${file}`;
+  return size === 'thumb' ? `arts_lari/gallery/${file}` : `arts_lari/gallery/${size}/${file}`;
 }
 
-function filterIdForCategory(categoryId) {
-  if (categoryId === 'paintings' || categoryId === 'commissions') return 'design';
-  return categoryId;
+// Tiles start on the light thumbnail; once the sharp version has loaded and
+// decoded, every copy of that tile switches to it (clones carry no listeners,
+// so this runs once per image across all units).
+function upgradeToSharp(track) {
+  const byUrl = new Map();
+  track.querySelectorAll('img[data-sharp]').forEach((img) => {
+    if (!byUrl.has(img.dataset.sharp)) byUrl.set(img.dataset.sharp, []);
+    byUrl.get(img.dataset.sharp).push(img);
+  });
+  byUrl.forEach((imgs, url) => {
+    const sharp = new Image();
+    sharp.src = url;
+    sharp.decode().then(() => {
+      imgs.forEach((img) => {
+        img.src = url;
+        img.removeAttribute('data-sharp');
+      });
+    }).catch(() => {});
+  });
 }
 
 function createCell(work, slot) {
@@ -61,21 +82,36 @@ function createCell(work, slot) {
   btn.className = 'gallery__cell';
   btn.dataset.slot = String(slot);
   btn.dataset.depth = String(depthForSlot(slot));
-  btn.dataset.src = work.src;
+  btn.dataset.src = galleryImage(work.src, 'lg');
+  btn.dataset.preview = galleryImage(work.src, 'md');
   btn.dataset.title = work.title;
   btn.dataset.category = work.category;
-  btn.dataset.filter = filterIdForCategory(work.categoryId);
   btn.dataset.available = work.forSale ? 'true' : 'false';
   btn.dataset.year = work.year;
   btn.dataset.technique = work.technique;
   btn.dataset.dimensions = work.dimensions;
   btn.dataset.description = work.description;
+  if (work.project) {
+    // Brand & Design: the detail view becomes a scrolling project page.
+    btn.dataset.scope = work.scope ?? '';
+    btn.dataset.project = JSON.stringify(work.project.map((image) => ({
+      md: galleryImage(image.src, 'md'),
+      lg: galleryImage(image.src, 'lg'),
+      width: image.width,
+      height: image.height,
+      cover: image.src === work.src,
+    })));
+    // Hand-tuned rows of 1-based image numbers; without it the modal falls back
+    // to an automatic rhythm.
+    if (work.layout) btn.dataset.layout = JSON.stringify(work.layout);
+  }
   btn.setAttribute('aria-label', `${work.title} — ${work.category}`);
 
   const frame = document.createElement('span');
   frame.className = 'gallery__frame';
   const img = document.createElement('img');
-  img.src = galleryThumb(work.src);
+  img.src = galleryImage(work.src);
+  img.dataset.sharp = galleryImage(work.src, 'md');
   img.alt = '';
   img.loading = 'lazy';
   img.decoding = 'async';
@@ -91,7 +127,7 @@ function createCell(work, slot) {
   title.textContent = work.title;
   const medium = document.createElement('span');
   medium.className = 'gallery__caption-medium';
-  medium.textContent = work.technique;
+  medium.textContent = work.scope ?? work.technique;
   caption.append(title, medium);
   frame.appendChild(caption);
 
@@ -630,7 +666,7 @@ export async function initImmersiveGallery() {
   // are what the tiles display anyway).
   const works = TILE_SEQUENCE.map((id) => worksById.get(id)).filter(Boolean);
   const aspects = new Map(await Promise.all(
-    [...new Set(works)].map(async (work) => [work.id, await loadAspect(galleryThumb(work.src))]),
+    [...new Set(works)].map(async (work) => [work.id, await loadAspect(galleryImage(work.src))]),
   ));
   tiles = works.map((work) => ({ work, workId: work.id, aspect: aspects.get(work.id) }));
 
@@ -689,25 +725,42 @@ export async function initImmersiveGallery() {
     if (!track.contains(event.relatedTarget)) setKeyboardFocus(null);
   });
 
+  // Hover focus (dimming the other pieces) only while the visitor is actually
+  // pointing: when the idle drift carries tiles under a resting cursor, the
+  // gallery stays calm instead of flickering.
+  let pointingTimer = 0;
+  stage.addEventListener('mousemove', () => {
+    stage.classList.add('is-pointing');
+    clearTimeout(pointingTimer);
+    pointingTimer = setTimeout(() => stage.classList.remove('is-pointing'), 1600);
+  }, { passive: true });
+  stage.addEventListener('mouseleave', () => {
+    clearTimeout(pointingTimer);
+    stage.classList.remove('is-pointing');
+  });
+
+  // Pressing on the gallery (to drag or pick another piece) ends keyboard
+  // focus; tiles aren't focused by pointer, so it would otherwise linger.
+  stage.addEventListener('pointerdown', () => {
+    if (track.contains(document.activeElement)) document.activeElement.blur();
+  });
+
   track.addEventListener('click', (event) => {
     if (dragController.wasMoved()) return;
     const cell = event.target.closest('.gallery__cell');
     if (!cell || !track.contains(cell)) return;
     const modalCell = getModalCell(track, cell);
-    if (!modalCell || modalCell.classList.contains('is-filtered-out')) return;
+    if (!modalCell) return;
     // From the keyboard the focused tile may be off-screen while a copy is
     // visible; fly from the visible copy.
     const source = cell.classList.contains('is-keyboard-focus')
       ? [...track.querySelectorAll('.gallery__cell.is-keyboard-focus')].find(isInView) ?? cell
       : cell;
-    window.__artModal?.open(modalCell, source);
+    // A click from Enter/Space has no pointer position (detail 0).
+    window.__artModal?.open(modalCell, source, { viaKeyboard: event.detail === 0 });
   });
 
-  initGalleryFilters({
-    filterRoot: document.getElementById('immersiveFilters'),
-    getCells: () => [...track.querySelectorAll('.gallery__cell')],
-  });
-
+  upgradeToSharp(track);
   track.dataset.ready = 'true';
 }
 

@@ -37,8 +37,10 @@ function scrollToHash(hash) {
   const target = document.querySelector(hash);
   if (!target) return;
 
+  // Land below the fixed header, not under it.
+  const offset = -(document.getElementById('appShell')?.offsetHeight ?? 0);
   if (window.__lenis) {
-    window.__lenis.scrollTo(target, { duration: 1.2 });
+    window.__lenis.scrollTo(target, { duration: 1.2, offset });
   } else {
     target.scrollIntoView({ behavior: 'smooth' });
   }
@@ -48,6 +50,10 @@ async function showImmersiveView() {
   const homeView = document.getElementById('homeView');
   const immersiveView = document.getElementById('immersiveView');
   if (!homeView || !immersiveView) return;
+
+  if (!window.isCommissionOverlayOpen?.()) {
+    setNavActive(VIEW_IMMERSIVE);
+  }
 
   const galleryModule = immersiveReady
     ? null
@@ -62,9 +68,6 @@ async function showImmersiveView() {
   immersiveView.hidden = false;
   document.body.classList.add('is-immersive-view');
   window.__lenis?.stop();
-  if (!window.isCommissionOverlayOpen?.()) {
-    setNavActive(VIEW_IMMERSIVE);
-  }
 
   const { layoutImmersiveGallery } = galleryModule ?? (await import('./immersive/infinite-gallery.js'));
   await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -79,6 +82,10 @@ async function showHomeView({ scrollTarget } = {}) {
   if (!homeView || !immersiveView) return;
 
   const fromImmersive = document.body.classList.contains('is-immersive-view');
+
+  if (!window.isCommissionOverlayOpen?.()) {
+    setNavActive(VIEW_HOME);
+  }
 
   if (fromImmersive) {
     await animateImmersiveExit(() => {
@@ -95,10 +102,6 @@ async function showHomeView({ scrollTarget } = {}) {
     window.__lenis?.start();
   }
 
-  if (!window.isCommissionOverlayOpen?.()) {
-    setNavActive(VIEW_HOME);
-  }
-
   if (scrollTarget) {
     requestAnimationFrame(() => scrollToHash(scrollTarget));
   }
@@ -110,6 +113,7 @@ async function applyRoute() {
   if (isTransitioning) return;
 
   const hash = location.hash;
+  window.closeMobileMenu?.();
 
   if (hash === '#commission') {
     window.openCommissionOverlay?.();

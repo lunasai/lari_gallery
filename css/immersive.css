@@ -1,60 +1,5 @@
 /* ─── Immersive — infinite drag gallery ─────── */
 
-.immersive-filters {
-  position: fixed;
-  bottom: 16px;
-  left: 16px;
-  z-index: 20;
-  padding: 8px 12px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: blur(0);
-  -webkit-backdrop-filter: blur(0);
-  pointer-events: auto;
-  transition:
-    background 0.25s ease,
-    box-shadow 0.25s ease,
-    backdrop-filter 0.25s ease,
-    -webkit-backdrop-filter 0.25s ease;
-}
-
-.immersive-filters:hover,
-.immersive-filters:focus-within {
-  background: rgba(var(--white-rgb), 0.55);
-  box-shadow: 0 4px 24px rgba(var(--black-rgb), 0.06);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.immersive-filters .gallery__filters {
-  width: auto;
-  flex-wrap: nowrap;
-  font-family: var(--font-serif);
-  letter-spacing: var(--font-serif-tracking);
-}
-
-.immersive-filters .gallery__filter:not(.is-active),
-.immersive-filters .gallery__available:not(:has(:checked)) {
-  color: rgba(var(--black-rgb), 0.55);
-}
-
-.immersive-filters .gallery__filter.is-active,
-.immersive-filters .gallery__available:has(:checked) {
-  color: var(--black);
-}
-
-.immersive-filters .gallery__filter:hover,
-.immersive-filters .gallery__available:hover {
-  color: var(--black);
-}
-
-.immersive-filters .gallery__available {
-  font-family: inherit;
-  transition: color 0.2s ease;
-}
-
 .immersive-main {
   position: absolute;
   inset: 0;
@@ -127,8 +72,12 @@
   z-index: 1;
 }
 
+/* Coming back to full strength waits a beat, so crossing the gap between two
+   pieces doesn't flash the whole gallery bright and dim again. */
 .immersive-unit .gallery__frame img {
-  transition: transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition:
+    transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 700ms cubic-bezier(0.33, 0, 0.2, 1) 140ms;
 }
 
 .gallery__caption {
@@ -136,8 +85,7 @@
   display: grid;
   gap: 1px;
   padding-top: 10px;
-  font-family: var(--font-serif);
-  letter-spacing: var(--font-serif-tracking);
+  font-family: var(--font-body);
   font-size: 13px;
   line-height: 1.3;
   text-align: left;
@@ -159,13 +107,22 @@
    in sync with HOVER_FEEDBACK_QUERY in infinite-gallery.js.
    .is-keyboard-focus is set by JS on every copy of the focused tile. */
 @media (hover: hover) and (min-width: 769px) {
-  .immersive-main:not(.is-dragging) .immersive-unit .gallery__cell:hover:not(.is-filtered-out) img,
-  .immersive-unit .gallery__cell.is-keyboard-focus:not(.is-filtered-out) img {
-    transform: scale(1.03);
+  .immersive-main:not(.is-dragging) .immersive-unit .gallery__cell:hover img,
+  .immersive-unit .gallery__cell.is-keyboard-focus img {
+    transform: scale(1.04);
   }
 
-  .immersive-main:not(.is-dragging) .immersive-unit .gallery__cell:hover:not(.is-filtered-out) .gallery__caption,
-  .immersive-unit .gallery__cell.is-keyboard-focus:not(.is-filtered-out) .gallery__caption {
+  /* Spotlight: the other pieces step back while one is pointed at */
+  .immersive-main:not(.is-dragging) .immersive-stage.is-pointing:has(.gallery__cell:hover)
+    .gallery__cell:not(:hover) .gallery__frame img {
+    opacity: 0.55;
+    transition:
+      transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 700ms cubic-bezier(0.33, 0, 0.2, 1);
+  }
+
+  .immersive-main:not(.is-dragging) .immersive-unit .gallery__cell:hover .gallery__caption,
+  .immersive-unit .gallery__cell.is-keyboard-focus .gallery__caption {
     opacity: 1;
     transform: none;
   }
@@ -180,19 +137,22 @@
   opacity: 1;
 }
 
-.immersive-unit .gallery__cell.is-visible.is-filtered-out {
-  opacity: 0.4;
-}
 
 #immersiveView.is-entering .immersive-unit .gallery__cell,
 #immersiveView.is-leaving .immersive-unit .gallery__cell {
   transition: none;
 }
 
-#immersiveView.is-leaving .immersive-main,
-#immersiveView.is-entering .immersive-main {
+/* Tiles are clickable while they ripple in; only the exit blocks input. */
+#immersiveView.is-leaving .immersive-main {
   pointer-events: none;
   cursor: default;
+}
+
+/* The home view (and its header background) is restored under the fading
+   gallery; keep the gallery full-bleed so it doesn't jump down meanwhile. */
+#immersiveView.is-leaving {
+  inset: 0;
 }
 
 @media (max-width: 1100px) {
@@ -204,23 +164,6 @@
 }
 
 @media (max-width: 768px) {
-  .immersive-filters {
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-    max-width: calc(100vw - 24px);
-  }
-
-  .immersive-filters:hover,
-  .immersive-filters:focus-within {
-    border-radius: 20px;
-  }
-
-  .immersive-filters .gallery__filters {
-    flex-wrap: wrap;
-    row-gap: 8px;
-  }
-
   .immersive-stage {
     --masonry-columns: var(--gallery-columns, 2);
     --masonry-gap: var(--gallery-gap, 20px);

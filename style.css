@@ -56,8 +56,10 @@
   --accent-dot:  #b97864; /* name punctuation */
 
   --font-display: var(--font-serif);
-  --font-serif:   'Spectral', serif;
-  --font-serif-tracking: -0.05em;
+  /* --font-serif is the site's display face (name kept for the dev panel) */
+  --font-serif:   'Clash Display', sans-serif;
+  --font-serif-tracking: -0.01em;
+  --font-display-weight: 400;
   --font-body:    'DM Sans', sans-serif;
 
   --space-xs:  8px;
@@ -77,9 +79,11 @@
   --page-padding:    40px;
   --page-padding-sm: 16px;
   --modal-padding:   24px;
-  --modal-art-w:     360px;
-  --modal-art-h:     480px;
-  --modal-details-w: 305px;
+  /* Detail view: two halves — art centred in the left, details bottom-left in
+     the right. The art box leaves generous room around the piece. */
+  --modal-max-w:     1280px;
+  --modal-art-h:     min(720px, calc(100vh - 2 * var(--modal-padding) - 200px));
+  --modal-details-w: 340px; /* text column inside the right half */
   --modal-content-gap: 80px;
   --page-gap:        80px;
   --page-gap-md:     56px;
@@ -87,7 +91,6 @@
   --grid-columns:    8;
   --link-rail-width: 741px;
   --link-gap:        24px;
-  --nav-logo-w:      43px;
   --nav-logo-h:      40px;
   --hero-art-w:      381px;
   --hero-art-ratio:  381 / 508;
@@ -249,18 +252,24 @@ ul {
   text-transform: uppercase;
 }
 
-.nav__links a,
-.link-rail a,
-.site-nav__menu,
-.nav__burger,
+/* Display type (Clash): names, titles, the bio and the large menu links */
 .hero__overlay-link,
 .nav__overlay-link,
 .hero__brand,
 .hero__bio,
-.gallery__filter,
-.gallery__available,
-.gallery__empty,
 .contact__headline,
+.modal__title {
+  font-family: var(--font-serif);
+  font-weight: var(--font-display-weight);
+  letter-spacing: var(--font-serif-tracking);
+}
+
+/* Small type (DM Sans): links, labels, captions and supporting copy */
+.nav__links a,
+.link-rail a,
+.site-nav__menu,
+.nav__burger,
+.gallery__empty,
 .contact__intro,
 .contact__service,
 .contact__input,
@@ -268,15 +277,14 @@ ul {
 .contact__email,
 .contact__social a,
 .modal__category,
-.modal__title,
 .modal__label,
 .modal__value,
 .modal__description,
 .modal__availability,
 .modal__cta,
 .intro__title {
-  font-family: var(--font-serif);
-  letter-spacing: var(--font-serif-tracking);
+  font-family: var(--font-body);
+  letter-spacing: 0;
 }
 
 /* ─── 4. Navigation ─────────────────────────── */
@@ -347,7 +355,7 @@ ul {
 .nav__overlay-link,
 .nav__overlay a {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: var(--font-display-weight);
   font-size: clamp(20px, 5vw, 24px);
   line-height: 1.1;
   color: var(--black);
@@ -534,6 +542,21 @@ body.is-immersive-view .app-shell {
   background: transparent;
 }
 
+/* A cream wash keeps the nav legible over the artwork. */
+body.is-immersive-view .app-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -56px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 239, 229, 0.94) 0%,
+    rgba(245, 239, 229, 0.78) 45%,
+    rgba(245, 239, 229, 0) 100%
+  );
+}
+
 body.is-immersive-view .app-view--immersive {
   inset: 0;
 }
@@ -560,16 +583,19 @@ body.is-modal-open .immersive-main {
 }
 
 .hero__logo {
-  display: block;
-  width: var(--nav-logo-w);
+  display: flex;
+  align-items: center;
   height: var(--nav-logo-h);
+  margin-right: var(--logo-gap, 10px); /* space between the star and the name */
   flex-shrink: 0;
 }
 
-.hero__logo img {
-  height: 100%;
+/* The star mark (from arts_lari/Star 2.png), cropped to its edges so it can be
+   sized and aligned against the name precisely. */
+.hero__logo-mark {
+  display: block;
   width: auto;
-  object-fit: contain;
+  height: var(--logo-h, 22px);
 }
 
 .hero__top.site-nav {
@@ -582,6 +608,7 @@ body.is-modal-open .immersive-main {
 
 .hero__brand {
   font-size: 17px;
+  font-weight: 500;
   line-height: 1.3;
   color: var(--black);
   text-decoration: none;
@@ -604,7 +631,7 @@ body.is-modal-open .immersive-main {
   z-index: 2;
   width: 100%;
   max-width: none;
-  font-weight: 400;
+  font-weight: var(--font-display-weight);
   font-size: 30px;
   line-height: 1.3;
   color: var(--black);
@@ -613,6 +640,30 @@ body.is-modal-open .immersive-main {
 
 .hero__bio p + p {
   margin-top: 1em;
+}
+
+.hero__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--link-gap);
+  margin-top: var(--space-md);
+  list-style: none;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.hero__social a {
+  color: rgba(var(--black-rgb), 0.55);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.hero__social a:hover,
+.hero__social a:focus-visible {
+  color: var(--black);
 }
 
 .hero__grid .hero__art {
@@ -635,6 +686,156 @@ body.is-modal-open .immersive-main {
   height: 100%;
   object-fit: cover;
   object-position: center 22%;
+}
+
+/* ─── 5b. About record (exhibitions + workshops) ─ */
+
+.record.page-shell {
+  gap: var(--space-xl);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--page-gap);
+  background: var(--hero-bg);
+}
+
+.record__label {
+  margin-bottom: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(var(--black-rgb), 0.55);
+}
+
+.record__list {
+  list-style: none;
+}
+
+.record__list > li {
+  border-top: 1px solid rgba(var(--black-rgb), 0.18);
+}
+
+.record__list > li:last-child {
+  border-bottom: 1px solid rgba(var(--black-rgb), 0.18);
+}
+
+.record__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--link-gap);
+  padding: 14px 0;
+}
+
+.record__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: var(--font-display-weight);
+  letter-spacing: var(--font-serif-tracking);
+  line-height: 1.2;
+  color: var(--black);
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    font-weight 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.record__row:hover .record__title {
+  transform: translateX(8px);
+  font-weight: 600;
+}
+
+.record__meta {
+  flex: none;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: right;
+  color: rgba(var(--black-rgb), 0.55);
+}
+
+.record__thumb {
+  display: none;
+}
+
+.record__float {
+  position: fixed;
+  top: 0;
+  left: 52vw;
+  z-index: 5;
+  width: 240px;
+  aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.96);
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+.record__float.is-on {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.record__float img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .record.page-shell {
+    gap: var(--space-lg);
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-lg);
+  }
+
+  .record__row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: var(--space-sm);
+    row-gap: 2px;
+    padding: 12px 0;
+  }
+
+  .record__row:not(:has(.record__thumb)) {
+    grid-template-columns: 1fr;
+  }
+
+  .record__row:not(:has(.record__thumb)) > * {
+    grid-column: 1;
+  }
+
+  .record__thumb {
+    display: block;
+    grid-row: 1 / span 2;
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+  }
+
+  .record__title,
+  .record__meta {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .record__title {
+    font-size: 20px;
+  }
+
+  .record__float {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .record__title,
+  .record__float {
+    transition: none;
+  }
 }
 
 .btn {
@@ -704,51 +905,6 @@ body.is-modal-open .immersive-main {
   opacity: 1;
 }
 
-.gallery__filters {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--link-gap);
-  flex-wrap: wrap;
-  flex-shrink: 0;
-  width: min(100%, var(--link-rail-width));
-}
-
-.gallery__filter {
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 1.1;
-  color: var(--black);
-  white-space: nowrap;
-  text-decoration: none;
-  transition: opacity 0.2s ease;
-}
-
-.gallery__filter:hover {
-  opacity: 0.65;
-}
-
-.gallery__filter.is-active {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.gallery__available {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 1.1;
-  color: var(--black);
-  white-space: nowrap;
-  user-select: none;
-}
-
 .gallery__checkbox {
   appearance: none;
   width: 16px;
@@ -794,13 +950,8 @@ body.is-modal-open .immersive-main {
   transition: opacity 0.15s ease;
 }
 
-.gallery__cell:hover:not(.is-filtered-out) {
+.gallery__cell:hover {
   opacity: 0.88;
-}
-
-.gallery__cell.is-filtered-out {
-  opacity: 0.4;
-  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1148,9 +1299,10 @@ body.is-modal-open .immersive-main {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(245, 239, 229, 0.92);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  /* Frosted: the gallery stays present as soft colour, not as detail. */
+  background: rgba(245, 239, 229, 0.82);
+  backdrop-filter: blur(28px) saturate(1.1);
+  -webkit-backdrop-filter: blur(28px) saturate(1.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1171,7 +1323,7 @@ body.is-modal-open .immersive-main {
   position: relative;
   background: transparent;
   width: 100%;
-  max-width: min(1440px, 100%);
+  max-width: min(var(--modal-max-w), 100%);
   height: min(900px, calc(100vh - (2 * var(--modal-padding))));
   max-height: calc(100vh - (2 * var(--modal-padding)));
   display: flex;
@@ -1281,9 +1433,29 @@ body.is-modal-open .immersive-main {
   }
 }
 
+.modal__icon-btn {
+  border-radius: 50%; /* the focus ring follows the round hover shape */
+}
+
 .modal__icon-btn:focus-visible {
-  outline: 2px solid var(--black);
+  outline: 1px solid var(--black);
   outline-offset: 2px;
+}
+
+/* Tucked away while reading down a long page (see modal.js) */
+.modal__controls {
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal-backdrop.is-controls-hidden .modal__controls {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.modal-backdrop.is-controls-hidden .modal__controls > * {
+  pointer-events: none;
 }
 
 .modal__icon-btn:active {
@@ -1305,8 +1477,8 @@ body.is-modal-open .immersive-main {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: var(--modal-art-w);
+  flex: 1 1 calc(50% - var(--modal-content-gap) / 2); /* halves; a real basis keeps them off the series' line */
+  min-width: 0;
   height: var(--modal-art-h);
   overflow: visible;
   padding: 0;
@@ -1336,12 +1508,13 @@ body.is-modal-open .immersive-main {
 .modal__details {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-self: stretch;
-  flex-shrink: 0;
+  justify-content: flex-end; /* bottom-aligned with the art box */
+  align-self: center;
+  flex: 1 1 calc(50% - var(--modal-content-gap) / 2); /* halves; a real basis keeps them off the series' line */
+  min-width: 0;
+  height: var(--modal-art-h);
   gap: 16px;
-  width: var(--modal-details-w);
-  padding: 0;
+  padding: 0 0 var(--art-inset, 0px); /* set by modal.js to the artwork's bottom edge */
   overflow-x: hidden;
   overflow-y: auto;
   min-height: 0;
@@ -1355,6 +1528,10 @@ body.is-modal-open .immersive-main {
   width: 100%;
 }
 
+.modal__details > * {
+  max-width: var(--modal-details-w);
+}
+
 .modal__category {
   font-size: 14px;
   line-height: 15px;
@@ -1363,10 +1540,10 @@ body.is-modal-open .immersive-main {
 }
 
 .modal__title {
-  font-weight: 400;
+  font-weight: var(--font-display-weight);
   font-size: clamp(24px, 5vw, 32px);
   line-height: 32px;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--font-serif-tracking);
   color: var(--black);
 }
 
@@ -1385,6 +1562,10 @@ body.is-modal-open .immersive-main {
   margin: 0;
   border: none;
   background: rgba(var(--black-rgb), 0.4);
+}
+
+.modal__field[hidden] {
+  display: none;
 }
 
 .modal__field {
@@ -1498,13 +1679,8 @@ body.is-modal-open .immersive-main {
     gap: clamp(32px, 6vw, var(--modal-content-gap));
   }
 
-  .modal__image-wrap {
-    width: min(var(--modal-art-w), 36vw);
-    height: min(var(--modal-art-h), 48vw);
-  }
-
-  .modal__details {
-    width: min(var(--modal-details-w), 32vw);
+  :root {
+    --modal-art-h: min(720px, calc(100vh - 2 * var(--modal-padding) - 200px), 56vw);
   }
 }
 
@@ -1592,9 +1768,269 @@ body.is-modal-open .immersive-main {
     flex: 0 0 auto;
     justify-content: flex-start;
     width: 100%;
+    height: auto;
     gap: 16px;
     padding: 24px 12px max(16px, env(safe-area-inset-bottom));
     overflow: visible;
+  }
+}
+
+/* Modal — Brand & Design project: the first screen is the regular detail view
+   (cover + details); the rest of the series follows below it when scrolled. */
+.modal-backdrop--project {
+  --modal-h: min(900px, calc(100vh - (2 * var(--modal-padding))));
+  align-items: flex-start;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal__scroll-hint {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.02em;
+  color: rgba(var(--black-rgb), 0.55);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.modal-backdrop--project .modal__scroll-hint {
+  display: inline-flex;
+}
+
+.modal__scroll-hint-arrow {
+  display: inline-block;
+  animation: modal-hint-bob 2.4s cubic-bezier(.45, 0, .55, 1) 1.2s infinite;
+}
+
+@media (hover: hover) {
+  .modal__scroll-hint:hover {
+    color: var(--black);
+  }
+}
+
+.modal__scroll-hint:focus-visible {
+  outline: 1px solid var(--black);
+  outline-offset: 4px;
+}
+
+@keyframes modal-hint-bob {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(4px); }
+}
+
+.modal__project {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.modal__project[hidden] {
+  display: none;
+}
+
+.modal__project-row {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.modal__project-row--narrow {
+  width: var(--row-w, 50%);
+  margin-inline: auto;
+}
+
+.modal__project-figure {
+  flex: var(--aspect, 1) 1 0;
+  min-width: 0;
+  margin: 0;
+  background: rgba(var(--black-rgb), 0.04); /* placeholder until revealed */
+}
+
+.modal__project-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* A lone image fills its row (flex-grow is its aspect ratio, which for a
+   portrait is below 1 and would leave the row part-empty). */
+.modal__project-figure:only-child {
+  flex-grow: 1;
+}
+
+/* Staged entrance: each row rises into place as it scrolls into view, its
+   images a beat apart (see the reveal observer in modal.js). */
+.modal__project-row .modal__project-figure {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 1s cubic-bezier(.33, 0, .2, 1),
+    transform 1.3s cubic-bezier(.22, 1, .36, 1);
+  transition-delay: calc(var(--i, 0) * 120ms);
+}
+
+.modal__project-row.is-revealed .modal__project-figure {
+  opacity: 1;
+  transform: none;
+  background: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal__project-row .modal__project-figure {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .modal__scroll-hint-arrow {
+    animation: none;
+  }
+}
+
+@media (min-width: 681px) {
+  /* Same row as a regular piece, but the panel grows past one screen. */
+  .modal-backdrop--project .modal {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    row-gap: 0;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* First screen matches a regular piece: both halves centred in one
+     screen's height, the details still bottom-aligned with the art box. */
+  .modal-backdrop--project .modal__image-wrap,
+  .modal-backdrop--project .modal__details {
+    margin-block: calc((var(--modal-h) - var(--modal-art-h)) / 2);
+  }
+
+  .modal-backdrop--project .modal__details {
+    overflow: visible;
+  }
+
+  /* The panel scrolls, so the controls stick to the top: a full-width first
+     flex line that takes no height. */
+  .modal-backdrop--project .modal__controls {
+    position: sticky;
+    top: 0;
+    flex: 0 0 100%;
+    height: 40px;
+    margin-bottom: -40px;
+  }
+
+
+  /* A touch narrower than the first screen, centred on the page. */
+  .modal__project {
+    flex: 0 0 auto;
+    width: min(100%, 1040px);
+    margin-inline: auto;
+    padding: var(--space-lg) 0 var(--space-xl);
+  }
+}
+
+@media (max-width: 680px) {
+  .modal__project {
+    gap: 12px;
+    padding: 0 12px max(24px, env(safe-area-inset-bottom));
+  }
+
+  .modal__project-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .modal__project-row--narrow {
+    width: 100%;
+  }
+
+  .modal__project-figure {
+    flex: none;
+  }
+}
+
+/* Next project: closes a project page */
+.modal__next-project {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  margin-top: var(--space-lg);
+  padding: var(--space-md) 0 0;
+  border: none;
+  border-top: 1px solid rgba(var(--black-rgb), 0.18);
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--black);
+  cursor: pointer;
+}
+
+.modal__next-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal__next-label {
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(var(--black-rgb), 0.66);
+}
+
+.modal__next-title {
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.1;
+  letter-spacing: var(--font-serif-tracking);
+}
+
+.modal__next-arrow {
+  display: inline-block;
+  margin-left: 0.3em;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal__next-thumb {
+  flex: none;
+  width: clamp(96px, 14vw, 180px);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .modal__next-project:hover .modal__next-arrow {
+    transform: translateX(8px);
+  }
+
+  .modal__next-project:hover .modal__next-thumb {
+    transform: scale(1.03);
+  }
+}
+
+.modal__next-project:focus-visible {
+  outline: 1px solid var(--black);
+  outline-offset: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal__controls,
+  .modal__next-arrow,
+  .modal__next-thumb {
+    transition: none;
   }
 }
 
@@ -1749,12 +2185,6 @@ body.is-modal-open .immersive-main {
   }
 
   /* Gallery — 4 columns × 4 rows */
-  .gallery__filters {
-    flex: 1 1 auto;
-    width: auto;
-    min-width: 0;
-  }
-
   .gallery__grid {
     --gallery-row-h: 280px;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1869,8 +2299,8 @@ body.is-modal-open .immersive-main {
   .hero__grid .hero__bio {
     order: 1;
     max-width: none;
-    font-size: 22px;
-    line-height: 1.35;
+    font-size: 18px;
+    line-height: 1.45;
   }
 
   .hero__grid .hero__art {
@@ -1885,10 +2315,6 @@ body.is-modal-open .immersive-main {
   .gallery__toolbar {
     flex-wrap: wrap;
     align-items: flex-start;
-  }
-
-  .gallery__filters {
-    width: 100%;
   }
 
   .gallery__grid {
@@ -2649,5 +3075,684 @@ body.is-intro-active > :not(#intro) {
   .hero__enter {
     opacity: 1;
     transition: none;
+  }
+}
+
+/* ─── 14. About — statement hero, record focus, closing invitation ─── */
+
+/* Original composition (bio and portrait bottom-aligned in a full-height
+   hero); only the type hierarchy changes: a display statement over a quieter
+   biography. */
+.hero__bio .hero__statement {
+  max-width: 24ch;
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: clamp(32px, 3.5vw, 52px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--black);
+}
+
+.hero__bio .hero__body {
+  max-width: 44ch;
+  margin-top: var(--space-md);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: rgba(var(--black-rgb), 0.78);
+}
+
+/* Secondary text: dark enough to read comfortably on the cream */
+.record__label,
+.record__meta,
+.hero__social a {
+  color: rgba(var(--black-rgb), 0.66);
+}
+
+/* Record: the hovered row gains weight while its neighbours step back */
+.record__title {
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    font-weight 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.35s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .record__list:hover .record__title {
+    opacity: 0.4;
+  }
+
+  .record__list .record__row:hover .record__title {
+    opacity: 1;
+  }
+}
+
+/* Closing invitation: headline, one line and a button that unfolds the form */
+.about-cta.page-shell {
+  gap: 0;
+  padding-top: var(--space-lg); /* the record above already ends with a page gap */
+  padding-bottom: var(--space-xl);
+  background: var(--hero-bg);
+}
+
+.about-cta__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.about-cta__headline {
+  margin: 0 0 var(--space-xs);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(52px, 6.4vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--black);
+}
+
+.about-cta__headline em {
+  font-style: italic;
+}
+
+.about-cta__text {
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: clamp(20px, 1.7vw, 24px);
+  line-height: 1.3;
+  letter-spacing: var(--font-serif-tracking);
+  color: var(--black);
+}
+
+.about-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.about-cta__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 22px 12px 26px;
+  border: 1px solid var(--black);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--black);
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Plus that folds into a minus, as in the option picker */
+.about-cta__open-icon {
+  position: relative;
+  width: 11px;
+  height: 11px;
+}
+
+.about-cta__open-icon::before,
+.about-cta__open-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-cta__open-icon::after {
+  transform: rotate(90deg);
+}
+
+.about-cta.is-open .about-cta__open-icon::after {
+  transform: rotate(0deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about-cta__open:hover {
+    background: var(--black);
+    color: var(--hero-bg);
+  }
+}
+
+.about-cta__open:focus-visible {
+  outline: 1px solid var(--black);
+  outline-offset: 3px;
+}
+
+/* The form unfolds to its natural height, its fields rising in one by one */
+.about-cta__reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-cta.is-open .about-cta__reveal {
+  grid-template-rows: 1fr;
+}
+
+.about-cta__reveal-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.about-cta .art-form {
+  max-width: 640px;
+  padding: var(--space-lg) 4px 4px 0; /* room for focus rings inside the clip */
+}
+
+.about-cta .art-form > * {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s ease;
+}
+
+.about-cta.is-open .art-form > * {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.6s ease var(--d, 0ms),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms);
+}
+
+.about-cta.is-open .art-form > :nth-child(1) { --d: 120ms; }
+.about-cta.is-open .art-form > :nth-child(2) { --d: 190ms; }
+.about-cta.is-open .art-form > :nth-child(3) { --d: 260ms; }
+.about-cta.is-open .art-form > :nth-child(4) { --d: 330ms; }
+
+.about-cta__mail {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(var(--black-rgb), 0.66);
+}
+
+.about-cta__mail a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.about-cta__mail a:hover {
+  color: var(--black);
+}
+
+/* Commission form (About closing section + Commission overlay) */
+.art-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+}
+
+.art-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px 32px;
+}
+
+.art-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.art-form__label {
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(var(--black-rgb), 0.66);
+}
+
+.art-form__control {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 0;
+  padding: 8px 0 10px;
+  border: 0;
+  border-bottom: 1px solid rgba(var(--black-rgb), 0.28);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: var(--font-serif-tracking);
+  color: var(--black);
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.art-form__control::placeholder {
+  color: rgba(var(--black-rgb), 0.35);
+  opacity: 1;
+}
+
+.art-form__control:hover {
+  border-bottom-color: rgba(var(--black-rgb), 0.5);
+}
+
+.art-form__control:focus,
+.art-form__control:focus-visible {
+  border-bottom-color: var(--black);
+}
+
+/* "I'm thinking of": a button that unfolds a row of options (see commission-overlay.js) */
+.art-choice__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 8px 0 10px;
+  border: 0;
+  border-bottom: 1px solid rgba(var(--black-rgb), 0.28);
+  background: none;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: var(--font-serif-tracking);
+  text-align: left;
+  color: var(--black);
+  cursor: pointer;
+  transition: border-color 0.25s ease;
+}
+
+.art-choice__toggle.is-empty .art-choice__value {
+  color: rgba(var(--black-rgb), 0.35);
+}
+
+.art-choice__toggle:hover {
+  border-bottom-color: rgba(var(--black-rgb), 0.5);
+}
+
+.art-choice.is-open .art-choice__toggle,
+.art-choice__toggle:focus-visible {
+  border-bottom-color: var(--black);
+  outline: none;
+}
+
+/* A plus that folds into a minus */
+.art-choice__icon {
+  position: relative;
+  flex: none;
+  width: 12px;
+  height: 12px;
+}
+
+.art-choice__icon::before,
+.art-choice__icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.art-choice__icon::after {
+  transform: rotate(90deg);
+}
+
+.art-choice.is-open .art-choice__icon::after {
+  transform: rotate(0deg);
+}
+
+/* Height animates from nothing to the options' natural size */
+.art-choice__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.art-choice.is-open .art-choice__panel {
+  grid-template-rows: 1fr;
+}
+
+.art-choice__options {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.art-choice__option {
+  margin-top: 10px; /* row spacing; keeps the folded panel at zero height */
+  padding: 7px 16px 8px;
+  border: 1px solid rgba(var(--black-rgb), 0.22);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: var(--font-serif-tracking);
+  color: var(--black);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.3s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Options arrive one after another once the panel opens */
+.art-choice.is-open .art-choice__option {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.4s ease calc(90ms + var(--i, 0) * 45ms),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) calc(90ms + var(--i, 0) * 45ms),
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .art-choice__option:hover {
+    border-color: var(--black);
+  }
+}
+
+.art-choice__option[aria-pressed="true"] {
+  border-color: var(--black);
+  background: var(--black);
+  color: var(--hero-bg);
+}
+
+.art-choice__option:focus-visible {
+  outline: 1px solid var(--black);
+  outline-offset: 2px;
+}
+
+.art-form__control--message {
+  resize: none;
+  min-height: 2.6em;
+  max-height: 12em;
+  field-sizing: content; /* grows with the text where supported */
+}
+
+.art-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-md);
+}
+
+.art-form__send {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border: 0;
+  background: var(--black);
+  color: var(--hero-bg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background-color 0.25s ease, opacity 0.25s ease;
+}
+
+.art-form__arrow {
+  display: inline-block;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.art-form__send[aria-disabled="true"] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .art-form__send:not([aria-disabled="true"]):hover {
+    background: var(--pink);
+  }
+
+  .art-form__send:not([aria-disabled="true"]):hover .art-form__arrow {
+    transform: translateX(6px);
+  }
+}
+
+.art-form__send:focus-visible {
+  outline: 1px solid var(--black);
+  outline-offset: 3px;
+}
+
+.art-form__status {
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(var(--black-rgb), 0.7);
+}
+
+.art-form__status:empty {
+  display: none;
+}
+
+.site-footer.page-shell {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-top: 1px solid rgba(var(--black-rgb), 0.18);
+  background: var(--hero-bg);
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(var(--black-rgb), 0.66);
+}
+
+.site-footer__top {
+  transition: color 0.2s ease;
+}
+
+.site-footer__top:hover {
+  color: var(--black);
+}
+
+/* ─── 15. Commission overlay — invitation + form ─── */
+
+.modal-backdrop.commission-overlay {
+  align-items: flex-start;
+}
+
+.commission-overlay__panel {
+  position: relative;
+  max-width: 480px;
+  gap: var(--space-md);
+  margin-block: auto; /* centred, yet scrolls from the top when taller than the screen */
+  padding-block: var(--space-md);
+}
+
+.commission-overlay__close {
+  position: absolute;
+  top: -16px; /* above the headline, in the panel's corner */
+  right: -12px;
+}
+
+.commission-overlay__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.commission-overlay .contact__headline {
+  margin: 0;
+  font-size: clamp(48px, 5vw, 68px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.commission-overlay .contact__intro {
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: rgba(var(--black-rgb), 0.78);
+}
+
+.commission-overlay__form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.commission-overlay .contact__direct-mail {
+  font-size: 14px;
+  color: rgba(var(--black-rgb), 0.66);
+}
+
+.contact__send[aria-disabled="true"] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact__send[aria-disabled="true"]:hover {
+    background: var(--black);
+  }
+}
+
+.contact__status {
+  min-height: 1.4em;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(var(--black-rgb), 0.7);
+}
+
+.contact__status:empty {
+  display: none;
+}
+
+/* Mobile menu: contact line pinned to the bottom */
+.hero__overlay-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+  font-size: 15px;
+  line-height: 1.4;
+  color: rgba(var(--black-rgb), 0.66);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-cta__reveal,
+  .about-cta__open-icon::before,
+  .about-cta__open-icon::after,
+  .about-cta .art-form > *,
+  .about-cta.is-open .art-form > *,
+  .art-form__arrow,
+  .art-form__control,
+  .art-form__send,
+  .art-choice__panel,
+  .art-choice__icon::before,
+  .art-choice__icon::after,
+  .art-choice__option,
+  .art-choice.is-open .art-choice__option {
+    transition: none;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .hero.page-shell {
+    padding-top: calc(var(--space-md) + 16px); /* the mobile bar is taller than --app-shell-h */
+    padding-bottom: var(--space-md);
+  }
+
+  .hero__bio .hero__statement {
+    max-width: none;
+    font-size: 28px;
+    line-height: 1.15;
+  }
+
+  .hero__bio .hero__body {
+    margin-top: var(--space-sm);
+    font-size: 16px;
+  }
+
+  .about-cta.page-shell {
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-lg);
+  }
+
+
+  .about-cta__headline {
+    font-size: clamp(48px, 15vw, 64px);
+  }
+
+  .art-form__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .art-form__control,
+  .art-choice__toggle {
+    font-size: 18px;
+  }
+
+  .site-footer.page-shell {
+    padding-top: var(--space-sm);
+    padding-bottom: max(var(--space-sm), env(safe-area-inset-bottom));
+  }
+
+  .commission-overlay__panel {
+    padding-block: var(--space-sm) var(--space-lg);
+  }
+
+  /* Clear of the header's "menu"; sits level with the title instead */
+  .commission-overlay__close {
+    top: calc(var(--space-sm) + 4px);
+  }
+
+  .commission-overlay .contact__headline {
+    padding-right: 40px;
+  }
+
+  .commission-overlay .contact__headline {
+    font-size: clamp(40px, 12vw, 56px); /* one line beside the close button */
+  }
+
+  .commission-overlay .contact__service {
+    font-size: 15px;
+  }
+
+  /* Mobile menu: links at display size */
+  .modal-backdrop.hero__overlay {
+    gap: var(--space-sm);
+  }
+
+  .hero__overlay-link {
+    font-size: clamp(36px, 11vw, 48px);
+    line-height: 1.1;
+  }
+
+  .hero__overlay-foot {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }

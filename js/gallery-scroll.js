@@ -55,8 +55,6 @@ function initGalleryScroll() {
       once: true,
       invalidateOnRefresh: true,
       onEnter: () => {
-        if (cell.classList.contains('is-filtered-out')) return;
-
         gsap.to(frame, {
           opacity: 1,
           y: 0,

@@ -1,53 +1,41 @@
 import gsap from 'gsap';
 
-const ENTER_TOTAL_DURATION = 3;
-const ENTER_OVERLAY_FADE = 0.5;
-const ENTER_PIECE_DELAY = 0.3;
-const ENTER_PIECE_DURATION = 0.55;
+// Enter: only the tiles on screen animate, rippling out from the centre of
+// the viewport; everything off screen is simply shown.
+const ENTER_DURATION = 0.7;
+const ENTER_SPREAD = 0.45; // delay of the farthest visible tile
+const ENTER_RISE = 16;
+const ENTER_SCALE = 0.97;
+const ENTER_EASE = 'power3.out';
 
-const PIECE_STAGGER = 0.05;
-const PIECE_DELAY = 0.15;
-const PIECE_DURATION = 0.3;
-const OVERLAY_FADE = 0.35;
-const PIECE_EASE = 'power2.inOut';
-
-function getEnterPieceStagger(frameCount) {
-  if (frameCount <= 1) return 0;
-
-  const staggerWindow = ENTER_TOTAL_DURATION - ENTER_PIECE_DELAY - ENTER_PIECE_DURATION;
-  return Math.max(staggerWindow / (frameCount - 1), 0);
-}
+// Exit: the next view is already in place underneath; the gallery fades off it.
+const EXIT_DURATION = 0.4;
+const EXIT_EASE = 'power2.out';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let activeTimeline = null;
 
-function getUnitFrameData(unit, direction) {
-  const cells = [...unit.querySelectorAll('.gallery__cell')].sort((a, b) => {
-    const av = Number(a.dataset.slot || 0);
-    const bv = Number(b.dataset.slot || 0);
-    return direction === 'enter' ? av - bv : bv - av;
-  });
-
-  return {
-    cells,
-    frames: cells.map((cell) => cell.querySelector('.gallery__frame')).filter(Boolean),
-  };
-}
-
-function getAllGalleryData(immersiveView, direction) {
-  const units = [...immersiveView.querySelectorAll('.immersive-unit')];
-
-  return {
-    units,
-    cells: units.flatMap((unit) => getUnitFrameData(unit, direction).cells),
-    frames: units.flatMap((unit) => getUnitFrameData(unit, direction).frames),
-  };
+function getCells(immersiveView) {
+  return [...immersiveView.querySelectorAll('.immersive-unit .gallery__cell')];
 }
 
 function setCellsVisible(cells, visible) {
   cells.forEach((cell) => {
     cell.classList.toggle('is-visible', visible);
+  });
+}
+
+// On-screen tiles with their distance from the viewport centre (0–1).
+function getOnScreenCells(cells) {
+  const cx = innerWidth / 2;
+  const cy = innerHeight / 2;
+  const maxDist = Math.hypot(cx, cy) || 1;
+  return cells.flatMap((cell) => {
+    const r = cell.getBoundingClientRect();
+    if (r.right <= 0 || r.bottom <= 0 || r.left >= innerWidth || r.top >= innerHeight) return [];
+    const dist = Math.hypot(r.left + r.width / 2 - cx, r.top + r.height / 2 - cy);
+    return [{ cell, t: Math.min(dist / maxDist, 1) }];
   });
 }
 
@@ -58,11 +46,8 @@ export function resetImmersiveGalleryAnimation(immersiveView) {
   activeTimeline = null;
 
   immersiveView.classList.remove('is-leaving', 'is-entering');
-
-  const { frames } = getAllGalleryData(immersiveView, 'enter');
-
   gsap.set(immersiveView, { clearProps: 'opacity' });
-  gsap.set(frames, { clearProps: 'opacity' });
+  gsap.set(getCells(immersiveView), { clearProps: 'opacity,transform' });
 }
 
 function afterPaint() {
@@ -77,59 +62,39 @@ export async function animateImmersiveEnter() {
   const immersiveView = document.getElementById('immersiveView');
   if (!immersiveView) return;
 
-  const { units, cells, frames } = getAllGalleryData(immersiveView, 'enter');
-  if (!frames.length) return;
+  const cells = getCells(immersiveView);
+  if (!cells.length) return;
 
   resetImmersiveGalleryAnimation(immersiveView);
-
-  if (reduceMotion) {
-    gsap.set(immersiveView, { opacity: 1 });
-    gsap.set(frames, { opacity: 1 });
-    setCellsVisible(cells, true);
-    return;
-  }
-
   setCellsVisible(cells, true);
-  gsap.set(immersiveView, { opacity: 0 });
-  gsap.set(frames, { opacity: 0 });
+  if (reduceMotion) return;
+
+  const onScreen = getOnScreenCells(cells);
+  const targets = onScreen.map(({ cell }) => cell);
+  immersiveView.classList.add('is-entering');
+  gsap.set(targets, { opacity: 0, y: ENTER_RISE, scale: ENTER_SCALE });
 
   await afterPaint();
 
   return new Promise((resolve) => {
-    immersiveView.classList.add('is-entering');
-
     activeTimeline = gsap.timeline({
       onComplete: () => {
         resetImmersiveGalleryAnimation(immersiveView);
-        setCellsVisible(cells, true);
         resolve();
       },
     });
 
-    activeTimeline.to(immersiveView, {
-      opacity: 1,
-      duration: ENTER_OVERLAY_FADE,
-      ease: PIECE_EASE,
-    });
-
-    const maxFrameCount = Math.max(
-      ...units.map((unit) => getUnitFrameData(unit, 'enter').frames.length),
-      1,
-    );
-    const enterStagger = getEnterPieceStagger(maxFrameCount);
-
-    units.forEach((unit) => {
-      const { frames: unitFrames } = getUnitFrameData(unit, 'enter');
-
+    onScreen.forEach(({ cell, t }) => {
       activeTimeline.to(
-        unitFrames,
+        cell,
         {
           opacity: 1,
-          duration: ENTER_PIECE_DURATION,
-          stagger: { each: enterStagger, from: 'start' },
-          ease: PIECE_EASE,
+          y: 0,
+          scale: 1,
+          duration: ENTER_DURATION,
+          ease: ENTER_EASE,
         },
-        ENTER_PIECE_DELAY,
+        t * ENTER_SPREAD,
       );
     });
   });
@@ -139,51 +104,18 @@ export function animateImmersiveExit(onBeforeOverlayFade) {
   const immersiveView = document.getElementById('immersiveView');
   if (!immersiveView) return Promise.resolve();
 
-  const { units, cells, frames } = getAllGalleryData(immersiveView, 'exit');
-
-  if (!frames.length || reduceMotion) {
-    onBeforeOverlayFade?.();
-    return Promise.resolve();
-  }
-
   resetImmersiveGalleryAnimation(immersiveView);
+  onBeforeOverlayFade?.();
 
-  setCellsVisible(cells, true);
-  gsap.set(immersiveView, { opacity: 1 });
-  gsap.set(frames, { opacity: 1 });
+  if (reduceMotion) return Promise.resolve();
 
   return new Promise((resolve) => {
     immersiveView.classList.add('is-leaving');
-
-    activeTimeline = gsap.timeline({
-      onComplete: () => {
-        resetImmersiveGalleryAnimation(immersiveView);
-        setCellsVisible(cells, true);
-        resolve();
-      },
+    activeTimeline = gsap.timeline({ onComplete: resolve });
+    activeTimeline.to(immersiveView, {
+      opacity: 0,
+      duration: EXIT_DURATION,
+      ease: EXIT_EASE,
     });
-
-    units.forEach((unit) => {
-      const { frames: unitFrames } = getUnitFrameData(unit, 'exit');
-
-      activeTimeline.to(
-        unitFrames,
-        {
-          opacity: 0,
-          duration: PIECE_DURATION,
-          stagger: { each: PIECE_STAGGER, from: 'start' },
-          ease: PIECE_EASE,
-        },
-        PIECE_DELAY,
-      );
-    });
-
-    activeTimeline
-      .add(() => onBeforeOverlayFade?.())
-      .to(immersiveView, {
-        opacity: 0,
-        duration: OVERLAY_FADE,
-        ease: PIECE_EASE,
-      });
   });
 }

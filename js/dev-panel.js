@@ -12,7 +12,7 @@ const STORAGE_KEY = 'lari:dev-panel';
 const FONTS = {
   spectral: { label: 'Spectral', stack: "'Spectral', serif", tracking: -0.05,
               weights: [300, 400, 500, 600, 700, 800] },
-  clash:    { label: 'Clash Display', stack: "'Clash Display', sans-serif", tracking: 0,
+  clash:    { label: 'Clash Display', stack: "'Clash Display', sans-serif", tracking: -0.01,
               weights: [200, 300, 400, 500, 600, 700] },
   dmsans:   { label: 'DM Sans', stack: "'DM Sans', sans-serif", tracking: 0,
               weights: [300, 400, 500] },
@@ -20,9 +20,9 @@ const FONTS = {
 
 const DEFAULTS = {
   open: false,
-  displayFont: 'spectral',
+  displayFont: 'clash',
   bodyFont: 'dmsans',
-  tracking: FONTS.spectral.tracking,
+  tracking: FONTS.clash.tracking,
   displayWeight: 'auto', // 'auto' = per-element weights from style.css
   bodyWeight: 'auto',
   columns: 4, // desktop defaults; untouched knobs keep the per-breakpoint values
@@ -270,4 +270,15 @@ function init() {
   sync();
 }
 
-if (IS_DEV) init();
+// Spectral is only a dev-panel option, so only the panel loads it.
+function loadDevFonts() {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap';
+  document.head.appendChild(link);
+}
+
+if (IS_DEV) {
+  loadDevFonts();
+  init();
+}

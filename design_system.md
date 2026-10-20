@@ -37,7 +37,7 @@ Used as the primary logo in the header, favicon, and all formal touchpoints.
 A minimal line illustration of a woman's face — bold, clean black strokes on white.
 Larissa's artistic alter-ego. Used as a hero accent or section divider.
 
-![Face illustration](arts%20lari/Logo%202.png)
+![Face illustration](arts_lari/Logo%202.png)
 
 *Use: About page, editorial layouts, print materials.*
 
@@ -48,7 +48,7 @@ Larissa's artistic alter-ego. Used as a hero accent or section divider.
 A hand-drawn 8-pointed star. Functions as a bullet point, section divider, or decorative pause.
 Replaces conventional design punctuation across all touchpoints.
 
-![Star mark](arts%20lari/Star%202.png)
+![Star mark](arts_lari/Star%202.png)
 
 *Use: list items, section separators, loading states, social captions.*
 
@@ -88,7 +88,7 @@ The roasted pink is used sparingly — a detail, not a background. It appears th
 
 Reference: the mini canvas series below, where roasted pink is paired against dusty lavender and off-white.
 
-![Painting — colour reference](arts%20lari/IMG_1854.jpg)
+![Painting — colour reference](arts_lari/IMG_1854.jpg)
 
 ---
 
@@ -178,7 +178,7 @@ It is always rendered in **Studio Black** or **Canvas White** — never in Roast
 ### Linoprint texture as background reference
 The linoprint work (see below) introduces a textural register that can be referenced in background treatments: very subtle paper-grain textures on full-bleed sections, or as a texture overlay on photography at low opacity.
 
-![Linoprint — woman and wolf](arts%20lari/IMG_7451.JPG)
+![Linoprint — woman and wolf](arts_lari/IMG_7451.JPG)
 
 This image is also a strong candidate for the hero section of the Portfolio page.
 
@@ -193,13 +193,13 @@ Larissa's photography falls into two registers. Both are appropriate for the web
 Intimate, slightly warm-toned. Larissa at work. The art mid-creation.
 These images convey authenticity and invite the viewer into the studio.
 
-![Larissa at easel — natural light](arts%20lari/IMG_7433.JPG)
+![Larissa at easel — natural light](arts_lari/IMG_7433.JPG)
 
-![Larissa painting at night](arts%20lari/IMG_7449.JPG)
+![Larissa painting at night](arts_lari/IMG_7449.JPG)
 
-![Larissa painting on wall](arts%20lari/IMG_7457.JPG)
+![Larissa painting on wall](arts_lari/IMG_7457.JPG)
 
-![Larissa at easel — figurative work](arts%20lari/DSCF3546.JPG)
+![Larissa at easel — figurative work](arts_lari/DSCF3546.JPG)
 
 ---
 
@@ -208,13 +208,13 @@ These images convey authenticity and invite the viewer into the studio.
 Clean, minimal. Works photographed against neutral walls or white surfaces.
 The work is the subject.
 
-![Small paintings on white fur](arts%20lari/IMG_1854.jpg)
+![Small paintings on white fur](arts_lari/IMG_1854.jpg)
 
-![Paintings displayed on wall](arts%20lari/IMG_7636.jpg)
+![Paintings displayed on wall](arts_lari/IMG_7636.jpg)
 
-![Larissa holding painting](arts%20lari/DSCF3651.JPG)
+![Larissa holding painting](arts_lari/DSCF3651.JPG)
 
-![Textured eye painting](arts%20lari/IMG_4987.jpg)
+![Textured eye painting](arts_lari/IMG_4987.jpg)
 
 ---
 
@@ -343,18 +343,18 @@ All source assets available in this project:
 | File | Type | Role |
 |---|---|---|
 | `brand lari/Assinatura.png` | Logo | Primary mark — LS stamp |
-| `arts lari/Logo 2.png` | Illustration | Secondary mark — female face |
-| `arts lari/Star 2.png` | Mark | Accent — 8-pointed star |
-| `arts lari/IMG_7433.JPG` | Photography | Studio portrait — hero candidate |
-| `arts lari/IMG_7449.JPG` | Photography | Studio process — atmospheric |
-| `arts lari/IMG_7457.JPG` | Photography | Studio process — detail |
-| `arts lari/DSCF3546.JPG` | Photography | Studio — figurative work in progress |
-| `arts lari/DSCF3651.JPG` | Photography | Larissa with painting — portrait |
-| `arts lari/IMG_7636.jpg` | Photography | Works displayed — wall installation |
-| `arts lari/IMG_1854.jpg` | Art | Colour reference — roasted pink palette |
-| `arts lari/IMG_4987.jpg` | Art | Painting — textured eye |
-| `arts lari/IMG_4991.jpg` | Art | Painting — figurative, warm ochre |
-| `arts lari/IMG_7451.JPG` | Art | Linoprint — hero candidate for Portfolio |
+| `arts_lari/Logo 2.png` | Illustration | Secondary mark — female face |
+| `arts_lari/Star 2.png` | Mark | Accent — 8-pointed star |
+| `arts_lari/IMG_7433.JPG` | Photography | Studio portrait — hero candidate |
+| `arts_lari/IMG_7449.JPG` | Photography | Studio process — atmospheric |
+| `arts_lari/IMG_7457.JPG` | Photography | Studio process — detail |
+| `arts_lari/DSCF3546.JPG` | Photography | Studio — figurative work in progress |
+| `arts_lari/DSCF3651.JPG` | Photography | Larissa with painting — portrait |
+| `arts_lari/IMG_7636.jpg` | Photography | Works displayed — wall installation |
+| `arts_lari/IMG_1854.jpg` | Art | Colour reference — roasted pink palette |
+| `arts_lari/IMG_4987.jpg` | Art | Painting — textured eye |
+| `arts_lari/IMG_4991.jpg` | Art | Painting — figurative, warm ochre |
+| `arts_lari/IMG_7451.JPG` | Art | Linoprint — hero candidate for Portfolio |
 | `reference_docs/wireframe_1.png` | Reference | Gallery layout sketch |
 
 ---
