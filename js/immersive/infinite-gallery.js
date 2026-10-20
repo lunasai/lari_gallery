@@ -1,25 +1,21 @@
 import { initGalleryFilters } from '../gallery-filters.js';
+import { layoutMasonry } from './masonry.js';
 
-const TILE_LAYOUT = [
-  { slot: 1, variant: 'tall', workId: 'woman-wolf' },
-  { slot: 2, variant: 'tall', workId: 'afternoon-nap' },
-  { slot: 3, variant: 'narrow', workId: 'the-eye' },
-  { slot: 4, variant: 'tall', workId: 'horned-crown' },
-  { slot: 5, variant: 'square', workId: 'mini-canvas' },
-  { slot: 6, variant: 'tall', workId: 'grenade' },
-  { slot: 7, variant: 'tall', workId: 'rider' },
-  { slot: 8, variant: 'narrow', workId: 'hair-brush' },
-  { slot: 9, variant: 'tall', workId: 'fox-moon' },
-  { slot: 10, variant: 'tall', workId: 'commissioned-portrait' },
-  { slot: 11, variant: 'square', workId: 'intimacy' },
-  { slot: 12, variant: 'narrow', workId: 'the-eye' },
-  { slot: 13, variant: 'tall', workId: 'rider' },
-  { slot: 14, variant: 'narrow', workId: 'hair-brush' },
-  { slot: 15, variant: 'tall', workId: 'afternoon-nap' },
-  { slot: 16, variant: 'square', workId: 'mini-canvas' },
+// One repeating unit, in reading order. The masonry layout assigns columns;
+// a work may repeat, but never directly above itself.
+const TILE_SEQUENCE = [
+  'woman-wolf', 'afternoon-nap', 'the-eye', 'horned-crown',
+  'mini-canvas', 'grenade', 'rider', 'hair-brush',
+  'fox-moon', 'commissioned-portrait', 'intimacy', 'the-eye',
+  'rider', 'hair-brush', 'afternoon-nap', 'mini-canvas',
 ];
 
-const REPEAT = 3;
+// Units tiled 3 across × 4 down. Staggered columns overflow a unit's bottom
+// edge, so the viewport is kept off the first row (see wrapY).
+const REPEAT_X = 3;
+const REPEAT_Y = 4;
+const SOURCE_UNIT_INDEX = REPEAT_X + 1; // column 1, row 1
+const FALLBACK_ASPECT = 0.8;
 const DRAG_THRESHOLD = 6;
 const FRICTION = 0.94;
 const VELOCITY_SMOOTHING = 0.38;
@@ -59,10 +55,10 @@ function filterIdForCategory(categoryId) {
   return categoryId;
 }
 
-function createCell(work, { slot, variant }) {
+function createCell(work, slot) {
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = `gallery__cell gallery__cell--${variant}`;
+  btn.className = 'gallery__cell';
   btn.dataset.slot = String(slot);
   btn.dataset.depth = String(depthForSlot(slot));
   btn.dataset.src = work.src;
@@ -119,22 +115,59 @@ function positionCaption(cell) {
   caption.style.width = `${paintedW}px`;
 }
 
-function buildUnit(worksById) {
+function buildUnit(tiles) {
   const unit = document.createElement('div');
   unit.className = 'immersive-unit';
 
   const grid = document.createElement('div');
-  grid.className = 'gallery__grid site-grid immersive-unit__grid';
+  grid.className = 'immersive-unit__grid';
   grid.setAttribute('role', 'list');
-
-  TILE_LAYOUT.forEach((tile) => {
-    const work = worksById.get(tile.workId);
-    if (!work) return;
-    grid.appendChild(createCell(work, tile));
-  });
+  tiles.forEach((tile, index) => grid.appendChild(createCell(tile.work, index + 1)));
 
   unit.appendChild(grid);
   return unit;
+}
+
+function loadAspect(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img.naturalWidth / img.naturalHeight || FALLBACK_ASPECT);
+    img.onerror = () => resolve(FALLBACK_ASPECT);
+    img.src = src;
+  });
+}
+
+function readLayoutSettings(stage) {
+  const style = getComputedStyle(stage);
+  const num = (name, fallback) => {
+    const value = parseFloat(style.getPropertyValue(name));
+    return Number.isFinite(value) ? value : fallback;
+  };
+  return {
+    columns: Math.round(num('--masonry-columns', 4)),
+    gap: num('--masonry-gap', 48),
+    stagger: num('--masonry-stagger', 0),
+  };
+}
+
+// Position every copy of each tile; all units share one layout.
+function applyMasonry(stage, track, tiles) {
+  const unit = track.querySelector('.immersive-unit');
+  const width = unit?.offsetWidth;
+  if (!width) return false;
+
+  const { height, boxes } = layoutMasonry({ tiles, width, ...readLayoutSettings(stage) });
+  track.querySelectorAll('.immersive-unit__grid').forEach((grid) => {
+    grid.style.height = `${height}px`;
+    grid.querySelectorAll('.gallery__cell').forEach((cell) => {
+      const box = boxes[Number(cell.dataset.slot) - 1];
+      if (!box) return;
+      Object.assign(cell.style, {
+        left: `${box.x}px`, top: `${box.y}px`, width: `${box.w}px`, height: `${box.h}px`,
+      });
+    });
+  });
+  return true;
 }
 
 function cloneUnit(unit, { source }) {
@@ -150,15 +183,14 @@ function cloneUnit(unit, { source }) {
 
 function layoutUnits(track, unitW, unitH) {
   const units = track.querySelectorAll('.immersive-unit');
-  const cols = REPEAT;
   units.forEach((el, index) => {
-    const col = index % cols;
-    const row = Math.floor(index / cols);
+    const col = index % REPEAT_X;
+    const row = Math.floor(index / REPEAT_X);
     el.style.left = `${col * unitW}px`;
     el.style.top = `${row * unitH}px`;
   });
-  track.style.width = `${unitW * cols}px`;
-  track.style.height = `${unitH * cols}px`;
+  track.style.width = `${unitW * REPEAT_X}px`;
+  track.style.height = `${unitH * REPEAT_Y}px`;
 }
 
 function createDragController({ stage, track, onDragChange }) {
@@ -231,6 +263,12 @@ function createDragController({ stage, track, onDragChange }) {
     return value;
   }
 
+  // Row 0 has no unit above it to fill the gaps left by staggered columns,
+  // so keep the viewport's top edge within row 1.
+  function wrapY(value) {
+    return wrapAxis(value + unitH, unitH) - unitH;
+  }
+
   function apply() {
     track.style.transform = `translate3d(${x}px, ${y}px, 0)`;
   }
@@ -287,7 +325,7 @@ function createDragController({ stage, track, onDragChange }) {
     }
 
     x = wrapAxis(x, unitW);
-    y = wrapAxis(y, unitH);
+    y = wrapY(y);
     apply();
     raf = requestAnimationFrame(tick);
   }
@@ -435,7 +473,7 @@ function createDragController({ stage, track, onDragChange }) {
       vy = 0;
       if (reduceMotion) {
         x = wrapAxis(x + best.dx, unitW);
-        y = wrapAxis(y + best.dy, unitH);
+        y = wrapY(y + best.dy);
         apply();
         return;
       }
@@ -465,6 +503,7 @@ function createDragController({ stage, track, onDragChange }) {
 
 let dragController = null;
 let parallaxController = null;
+let tiles = [];
 
 function createImmersiveParallax({ stage, track, isDragging, getAmbientStrength }) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -587,15 +626,29 @@ export async function initImmersiveGallery() {
   const data = await res.json();
   const worksById = new Map(data.works.map((work) => [work.id, work]));
 
-  const sourceUnit = buildUnit(worksById);
+  // Masonry needs each piece's proportions up front (thumbnails are small and
+  // are what the tiles display anyway).
+  const works = TILE_SEQUENCE.map((id) => worksById.get(id)).filter(Boolean);
+  const aspects = new Map(await Promise.all(
+    [...new Set(works)].map(async (work) => [work.id, await loadAspect(galleryThumb(work.src))]),
+  ));
+  tiles = works.map((work) => ({ work, workId: work.id, aspect: aspects.get(work.id) }));
+
+  const sourceUnit = buildUnit(tiles);
   track.replaceChildren();
 
-  for (let i = 0; i < REPEAT * REPEAT; i += 1) {
-    track.appendChild(cloneUnit(sourceUnit, { source: i === Math.floor((REPEAT * REPEAT) / 2) }));
+  for (let i = 0; i < REPEAT_X * REPEAT_Y; i += 1) {
+    track.appendChild(cloneUnit(sourceUnit, { source: i === SOURCE_UNIT_INDEX }));
   }
 
+  applyMasonry(stage, track, tiles);
   dragController = createDragController({ stage, track });
   dragController.start();
+
+  // Width changes (resize, view shown) and dev-panel tweaks re-run the layout;
+  // the resulting unit size change is picked up by the drag controller.
+  new ResizeObserver(() => applyMasonry(stage, track, tiles)).observe(stage);
+  window.addEventListener('lari:gallery-layout', () => applyMasonry(stage, track, tiles));
 
   parallaxController?.destroy();
   parallaxController = createImmersiveParallax({
@@ -659,5 +712,8 @@ export async function initImmersiveGallery() {
 }
 
 export function layoutImmersiveGallery() {
+  const stage = document.getElementById('immersiveStage');
+  const track = document.getElementById('immersiveTrack');
+  if (stage && track && tiles.length) applyMasonry(stage, track, tiles);
   return dragController?.remeasure() ?? false;
 }

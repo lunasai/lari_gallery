@@ -88,32 +88,25 @@
   width: min(1440px, 100vw);
 }
 
-.immersive-unit__grid {
-  --gallery-row-h: 353px;
-  grid-auto-rows: var(--gallery-row-h);
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+/* Balanced masonry (laid out by js/immersive/masonry.js). The dev panel can
+   override these via --gallery-columns / --gallery-gap / --gallery-stagger. */
+.immersive-stage {
+  --masonry-columns: var(--gallery-columns, 4);
+  --masonry-gap: var(--gallery-gap, 64px);
+  --masonry-stagger: var(--gallery-stagger, 160px);
 }
 
-/* Always use desktop slot map — global responsive gallery rules target 4/2 cols */
-.immersive-unit__grid .gallery__cell[data-slot="1"]  { grid-column: 1 / span 2; grid-row: 1; }
-.immersive-unit__grid .gallery__cell[data-slot="2"]  { grid-column: 3 / span 2; grid-row: 1; }
-.immersive-unit__grid .gallery__cell[data-slot="3"]  { grid-column: 5 / span 2; grid-row: 1; }
-.immersive-unit__grid .gallery__cell[data-slot="4"]  { grid-column: 7 / span 2; grid-row: 1; }
-.immersive-unit__grid .gallery__cell[data-slot="5"]  { grid-column: 1 / span 2; grid-row: 2; }
-.immersive-unit__grid .gallery__cell[data-slot="6"]  { grid-column: 3 / span 2; grid-row: 2; }
-.immersive-unit__grid .gallery__cell[data-slot="7"]  { grid-column: 5 / span 2; grid-row: 2; }
-.immersive-unit__grid .gallery__cell[data-slot="8"]  { grid-column: 7 / span 2; grid-row: 2; }
-.immersive-unit__grid .gallery__cell[data-slot="9"]  { grid-column: 1 / span 2; grid-row: 3; }
-.immersive-unit__grid .gallery__cell[data-slot="10"] { grid-column: 3 / span 2; grid-row: 3; }
-.immersive-unit__grid .gallery__cell[data-slot="11"] { grid-column: 5 / span 2; grid-row: 3; }
-.immersive-unit__grid .gallery__cell[data-slot="12"] { grid-column: 7 / span 2; grid-row: 3; }
-.immersive-unit__grid .gallery__cell[data-slot="13"] { grid-column: 1 / span 2; grid-row: 4; }
-.immersive-unit__grid .gallery__cell[data-slot="14"] { grid-column: 3 / span 2; grid-row: 4; }
-.immersive-unit__grid .gallery__cell[data-slot="15"] { grid-column: 5 / span 2; grid-row: 4; }
-.immersive-unit__grid .gallery__cell[data-slot="16"] { grid-column: 7 / span 2; grid-row: 4; }
+.immersive-unit__grid {
+  position: relative;
+}
 
-.immersive-unit__grid .gallery__cell[data-slot] {
-  padding: var(--page-padding);
+.immersive-unit__grid .gallery__cell {
+  position: absolute;
+  padding: 0;
+}
+
+.immersive-unit__grid .gallery__frame {
+  max-height: none;
 }
 
 .immersive-unit .gallery__frame {
@@ -203,16 +196,10 @@
 }
 
 @media (max-width: 1100px) {
-  .immersive-unit__grid {
-    --gallery-row-h: 280px;
-  }
-
-  .immersive-unit__grid .gallery__cell[data-slot] {
-    padding: var(--page-padding);
-  }
-
-  .immersive-unit__grid .gallery__frame {
-    max-height: calc(var(--gallery-row-h) - 2 * var(--page-padding));
+  .immersive-stage {
+    --masonry-columns: var(--gallery-columns, 3);
+    --masonry-gap: var(--gallery-gap, 48px);
+    --masonry-stagger: var(--gallery-stagger, 120px);
   }
 }
 
@@ -234,26 +221,10 @@
     row-gap: 8px;
   }
 
-  .immersive-unit__grid {
-    --gallery-row-h: 240px;
-  }
-
-  .immersive-unit__grid .gallery__cell[data-slot] {
-    padding: var(--page-padding-sm);
-  }
-
-  .immersive-unit__grid .gallery__frame {
-    max-height: calc(var(--gallery-row-h) - 2 * var(--page-padding-sm));
-  }
-}
-
-@media (max-width: 480px) {
-  .immersive-unit__grid {
-    --gallery-row-h: 180px;
-  }
-
-  .immersive-unit__grid .gallery__frame {
-    max-height: calc(var(--gallery-row-h) - 2 * var(--page-padding-sm));
+  .immersive-stage {
+    --masonry-columns: var(--gallery-columns, 2);
+    --masonry-gap: var(--gallery-gap, 20px);
+    --masonry-stagger: var(--gallery-stagger, 64px);
   }
 }
 
